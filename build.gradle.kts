@@ -9,7 +9,7 @@ repositories {
 }
 
 javafx {
-    version = "21" // Используйте LTS-версию
+    version = "23.0.1" // Используйте LTS-версию
     modules = listOf("javafx.controls", "javafx.fxml")
 }
 
@@ -19,13 +19,15 @@ application {
 
 tasks.withType<JavaExec> {
     jvmArgs = listOf(
-        "--add-opens", "javafx.graphics/javafx.scene=ALL-UNNAMED",
-        "--add-exports", "javafx.graphics/com.sun.javafx.application=ALL-UNNAMED"
+        "--module-path", "C:/openjfx-21.0.7_windows-x64_bin-sdk/javafx-sdk-21.0.7/lib",
+        "--add-modules", "javafx.controls,javafx.fxml"
     )
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17)) // JDK 17 обязательно
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "nihvostain.Main"
     }
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE  // Исключить дубликаты
 }
