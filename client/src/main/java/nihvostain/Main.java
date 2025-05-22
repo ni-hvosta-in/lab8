@@ -8,10 +8,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import nihvostain.commands.*;
 import nihvostain.managers.Communication;
 import nihvostain.managers.Invoker;
 import nihvostain.managers.Registration;
 import nihvostain.managers.gui.ControllerLogin;
+import nihvostain.utility.Command;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -47,7 +49,6 @@ public class Main extends Application {
         StudyGroup.setFields(new FieldsStudyGroup[]{FieldsStudyGroup.NAME,
                 FieldsStudyGroup.COORDINATES, FieldsStudyGroup.StudentsCount,
                 FieldsStudyGroup.FormOFEducation, FieldsStudyGroup.SEMESTER, FieldsStudyGroup.GroupADMIN});
-
 
         launch(args);
 

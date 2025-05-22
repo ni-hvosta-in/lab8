@@ -12,12 +12,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import nihvostain.commands.*;
 import nihvostain.managers.Communication;
+import nihvostain.managers.Invoker;
 import nihvostain.managers.Registration;
+import nihvostain.utility.Command;
 
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedHashMap;
 import java.util.concurrent.TimeoutException;
 
 public class ControllerLogin {
@@ -71,15 +75,34 @@ public class ControllerLogin {
     }
 
     public void openMainWindow() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/cmd.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
         Parent root = fxmlLoader.load();
-        ControllerCMD controllerCMD = fxmlLoader.getController();
-        controllerCMD.setCommunication(communication);
-        controllerCMD.setLogin(login);
-        controllerCMD.setPassword(password);
+        ControllerMain controllerMain = fxmlLoader.getController();
+        controllerMain.setCommunication(communication);
+        controllerMain.setLogin(login);
+        controllerMain.setPassword(password);
+
+        LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
+        commands.put("help", new HelpCommand(commands.values()));
+        commands.put("show", new ShowCommand(communication));
+        commands.put("info", new InfoCommand(communication));
+        commands.put("insert", new InsertCommand(communication, login, password));
+        commands.put("update", new UpdateCommand(communication, login, password));
+        commands.put("remove_key", new RemoveKeyCommand(communication, login, password));
+        commands.put("clear", new ClearCommand(communication));
+        commands.put("execute_script", new ExecuteScriptCommand(communication, login, password));
+        commands.put("exit", new ExitCommand(communication));
+        commands.put("remove_lower", new RemoveLowerCommand(communication));
+        commands.put("replace_if_greater", new ReplaceIfGreaterCommand(communication, login, password));
+        commands.put("remove_greater_key", new RemoveGreaterKeyCommand(communication));
+        commands.put("group_counting_by_semester_enum", new GroupCountingBySemesterEnum(communication));
+        commands.put("filter_contains_name", new FilterContainsNameCommand(communication));
+        commands.put("filter_greater_than_group_admin", new FilterGreaterThanGroupAdminCommand(communication));
+        Invoker.setCommands(commands);
+
         Scene scene = new Scene(root);
         Stage stage = new Stage();
-        stage.setTitle("CMD");
+        stage.setTitle("Main Window");
         stage.setScene(scene);
         stage.show();
 
