@@ -1,10 +1,12 @@
 package nihvostain.managers.gui;
 
-import common.managers.Deserialize;
 import common.utility.RegistrationMessage;
 import common.utility.TypeAuthentication;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -25,6 +27,8 @@ public class ControllerLogin {
     @FXML private TextField loginField;
     @FXML private PasswordField passwordField;
     private Communication communication;
+    private String login;
+    private String password;
 
     @FXML private void loginButtonAction(ActionEvent actionEvent) throws NoSuchAlgorithmException, IOException {
 
@@ -41,7 +45,6 @@ public class ControllerLogin {
         String password = hexString.toString();
         Registration registration = null;
 
-        System.out.println(authButton);
         if (clicked == authButton) {
             registration = new Registration(loginField.getText(), password, communication, TypeAuthentication.AUTHORIZATION);
         } else if (clicked == registButton) {
@@ -52,6 +55,9 @@ public class ControllerLogin {
             message = registration.register();
             if (message.equals(RegistrationMessage.AUTHORIZATION_SUCCESS) || message.equals(RegistrationMessage.REGISTRATION_SUCCESS)) {
                 labelState.setText("Login Successful");
+                login = loginField.getText();
+                this.password = password;
+                openMainWindow();
                 Stage stage = (Stage) authButton.getScene().getWindow();
                 stage.close();
             } else {
@@ -64,7 +70,20 @@ public class ControllerLogin {
         }
     }
 
+    public void openMainWindow() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/cmd.fxml"));
+        Parent root = fxmlLoader.load();
+        ControllerCMD controllerCMD = fxmlLoader.getController();
+        controllerCMD.setCommunication(communication);
+        controllerCMD.setLogin(login);
+        controllerCMD.setPassword(password);
+        Scene scene = new Scene(root);
+        Stage stage = new Stage();
+        stage.setTitle("CMD");
+        stage.setScene(scene);
+        stage.show();
 
+    }
 
     public void setCommunication(Communication communication) {
         this.communication = communication;
