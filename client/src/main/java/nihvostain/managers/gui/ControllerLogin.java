@@ -82,6 +82,7 @@ public class ControllerLogin {
         controllerMain.setLogin(login);
         controllerMain.setPassword(password);
 
+
         LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
         commands.put("help", new HelpCommand(commands.values(), controllerMain.getResultLabel()));
         commands.put("show", new ShowCommand(communication));
