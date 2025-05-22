@@ -83,14 +83,14 @@ public class ControllerLogin {
         controllerMain.setPassword(password);
 
         LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
-        commands.put("help", new HelpCommand(commands.values()));
+        commands.put("help", new HelpCommand(commands.values(), controllerMain.getResultLabel()));
         commands.put("show", new ShowCommand(communication));
         commands.put("info", new InfoCommand(communication));
         commands.put("insert", new InsertCommand(communication, login, password));
         commands.put("update", new UpdateCommand(communication, login, password));
         commands.put("remove_key", new RemoveKeyCommand(communication, login, password));
         commands.put("clear", new ClearCommand(communication));
-        commands.put("execute_script", new ExecuteScriptCommand(communication, login, password));
+        commands.put("execute_script", new ExecuteScriptCommand(communication, login, password, controllerMain.getResultLabel()));
         commands.put("exit", new ExitCommand(communication));
         commands.put("remove_lower", new RemoveLowerCommand(communication));
         commands.put("replace_if_greater", new ReplaceIfGreaterCommand(communication, login, password));

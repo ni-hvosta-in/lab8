@@ -4,6 +4,8 @@ import common.exceptions.*;
 import common.managers.*;
 import common.model.*;
 import common.utility.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import nihvostain.commands.*;
 import nihvostain.managers.inputManagers.InputPerson;
 import nihvostain.managers.inputManagers.InputStudyGroup;
@@ -11,10 +13,7 @@ import nihvostain.utility.Command;
 
 import java.io.IOException;
 import java.io.StreamCorruptedException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -33,7 +32,7 @@ public class Invoker {
 
     private final String login;
     private final String password;
-
+    private final TextArea resulLabel;
     /**
      * Коммуникация
      */
@@ -50,14 +49,19 @@ public class Invoker {
     /**
          * @param sc сканер
      */
+    private static LinkedHashMap<String, Command> commands;
 
-    public Invoker(Scanner sc, Communication communication, String login, String password) {
+    public Invoker(Scanner sc, Communication communication, String login, String password, TextArea resulLabel) {
 
         this.sc = sc;
         this.communication = communication;
         this.login = login;
         this.password = password;
+        this.resulLabel = resulLabel;
+    }
 
+    public static void setCommands(LinkedHashMap<String, Command> commands) {
+        Invoker.commands = commands;
     }
 
     /**
@@ -67,28 +71,10 @@ public class Invoker {
      */
     public void scanning() throws InputFromScriptException, RecursionDepthExceededException, IOException {
 
-        LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
-        commands.put("help", new HelpCommand(commands.values()));
-        commands.put("show", new ShowCommand(communication));
-        commands.put("info", new InfoCommand(communication));
-        commands.put("insert", new InsertCommand(communication, login, password));
-        commands.put("update", new UpdateCommand(communication, login, password));
-        commands.put("remove_key", new RemoveKeyCommand(communication, login, password));
-        commands.put("clear", new ClearCommand(communication));
-        commands.put("execute_script", new ExecuteScriptCommand(communication, login, password));
-        commands.put("exit", new ExitCommand(communication));
-        commands.put("remove_lower", new RemoveLowerCommand(communication));
-        commands.put("replace_if_greater", new ReplaceIfGreaterCommand(communication, login, password));
-        commands.put("remove_greater_key", new RemoveGreaterKeyCommand(communication));
-        commands.put("group_counting_by_semester_enum", new GroupCountingBySemesterEnum(communication));
-        commands.put("filter_contains_name", new FilterContainsNameCommand(communication));
-        commands.put("filter_greater_than_group_admin", new FilterGreaterThanGroupAdminCommand(communication));
-
         while (sc.hasNext()){
 
             String line = sc.nextLine().trim();
             ArrayList <String> tokens = new ArrayList<>(List.of(line.split(" +")));
-
             Command command = commands.get(tokens.get(0));
             tokens.remove(0);
             ArrayList<String> args = new ArrayList<>(tokens);
@@ -113,7 +99,7 @@ public class Invoker {
                                 try {
                                     communication.send(command.request(args).addUser(login, password).serialize());
                                     byte[] message = communication.receive();
-                                    System.out.println(new Deserialize<RequestObj>(message).deserialize().getRequest());
+                                    resulLabel.setText(new Deserialize<RequestObj>(message).deserialize().getRequest().toString());
                                     if (command == commands.get("exit")) {
                                         System.exit(0);
                                     }
@@ -154,7 +140,7 @@ public class Invoker {
 
         }
         if (!fileFlag){
-            Invoker invoker = new Invoker(new Scanner(System.in), communication, login, password);
+            Invoker invoker = new Invoker(new Scanner(System.in), communication, login, password, resulLabel);
             invoker.setDepth(1);
             System.out.println("чтобы выйти из консоли введите exit");
             System.out.print("~ ");

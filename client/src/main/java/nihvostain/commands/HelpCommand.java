@@ -4,6 +4,7 @@ import common.managers.*;
 import common.model.*;
 import common.model.TypeOfElement;
 import common.utility.*;
+import javafx.scene.control.TextArea;
 import nihvostain.utility.Command;
 
 import java.util.ArrayList;
@@ -15,13 +16,23 @@ import java.util.Collection;
 public class HelpCommand implements Command {
 
     private final Collection<Command> commands;
-    public HelpCommand(Collection<Command> commands){
+    private final TextArea resultLabel;
+    public HelpCommand(Collection<Command> commands, TextArea resultLabel){
         this.commands = commands;
+        this.resultLabel = resultLabel;
     }
 
     @Override
     public Request request(ArrayList<String> args) {
-        commands.forEach(x -> System.out.println(x.description()));
+
+        final String[] answer = {""};
+        for (Command command : commands) {
+            answer[0] = answer[0] + command.description() + "\n";
+        }
+        commands.forEach(x -> {
+            System.out.println(x.description());
+            answer[0] = answer[0] +x.description()+"\n";});
+        resultLabel.setText(answer[0]);
         return null;
     }
 

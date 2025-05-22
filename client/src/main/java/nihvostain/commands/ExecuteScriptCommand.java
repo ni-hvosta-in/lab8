@@ -4,6 +4,8 @@ import common.exceptions.*;
 import common.managers.Request;
 import common.model.TypeOfElement;
 import common.utility.InvalidParamMessage;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import nihvostain.managers.Communication;
 import nihvostain.managers.Invoker;
 import nihvostain.utility.Command;
@@ -20,12 +22,13 @@ public class ExecuteScriptCommand implements Command {
     private final Communication communication;
     private final String login;
     private final String password;
-
-    public ExecuteScriptCommand(Communication communication, String login, String password) {
+    private final TextArea resultLabel;
+    public ExecuteScriptCommand(Communication communication, String login, String password, TextArea resultLabel) {
         this.communication = communication;
         this.login = login;
         this.password = password;
 
+        this.resultLabel = resultLabel;
     }
 
     @Override
@@ -33,7 +36,7 @@ public class ExecuteScriptCommand implements Command {
         Scanner sc = null;
         try {
             sc = new Scanner(new File(args.get(0)));
-            Invoker invoker = new Invoker(sc, communication, login, password);
+            Invoker invoker = new Invoker(sc, communication, login, password, resultLabel);
             invoker.setFileFlag(true);
             try {
                 invoker.scanning();
