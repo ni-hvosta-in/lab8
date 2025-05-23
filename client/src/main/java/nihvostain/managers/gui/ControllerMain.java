@@ -4,11 +4,18 @@ import common.exceptions.InputFromScriptException;
 import common.exceptions.RecursionDepthExceededException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import nihvostain.managers.Communication;
 import nihvostain.managers.Invoker;
+import nihvostain.utility.Command;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 public class ControllerMain {
@@ -18,15 +25,35 @@ public class ControllerMain {
     private String login;
     private String password;
 
-    @FXML public void execute(ActionEvent actionEvent) throws RecursionDepthExceededException, InputFromScriptException, IOException {
+    @FXML public void execute(ActionEvent actionEvent) throws RecursionDepthExceededException, IOException {
 
         Button clicked = (Button) actionEvent.getSource();
         System.out.println(clicked.getText());
-        Scanner scanner = new Scanner(clicked.getText());
+        Command command = Invoker.getCommands().get(clicked.getText());
+        String comm = clicked.getText();
+
+        if (command.getNeededArgsLen() == 1){
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/onefieldset.fxml"));
+            Parent root = fxmlLoader.load();
+            ControllerOneField controllerOneField = fxmlLoader.getController();
+            controllerOneField.setFieldLabel(clicked.getText());
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Окно ввода");
+            stage.initModality(Modality.APPLICATION_MODAL); // Блокирует родительское окно
+            stage.showAndWait(); // Ожидание закрытия окна
+            comm = comm +" "+ controllerOneField.getFieldValue();
+        }
+        Scanner scanner = new Scanner(comm);
         resultLabel.setEditable(false);
+
         Invoker invoker = new Invoker(scanner, communication, login, password, resultLabel);
         invoker.setFileFlag(true);
-        invoker.scanning();
+        try {
+            invoker.scanning();
+        } catch (InputFromScriptException e) {
+            resultLabel.setText(e.getMessage());
+        }
     }
 
     public void setCommunication(Communication communication) {

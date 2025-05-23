@@ -164,4 +164,8 @@ public class Invoker {
     public void setDepth(int depth){
         Invoker.depth = depth;
     }
+
+    public static LinkedHashMap<String, Command> getCommands() {
+        return commands;
+    }
 }
