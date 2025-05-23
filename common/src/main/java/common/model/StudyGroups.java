@@ -2,12 +2,13 @@ package common.model;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * Класс обертка для учебной группы
  */
-public class StudyGroups {
+public class StudyGroups implements Serializable {
 
     @JacksonXmlProperty(localName = "studyGroups")
     private Map<String,StudyGroup> studyGroupList;

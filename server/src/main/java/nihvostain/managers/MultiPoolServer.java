@@ -5,6 +5,8 @@ import common.exceptions.RecursionDepthExceededException;
 import common.managers.*;
 import common.model.FormOfEducation;
 import common.model.Person;
+import common.model.StudyGroup;
+import common.model.StudyGroupWithKey;
 import common.utility.*;
 import nihvostain.commands.*;
 import nihvostain.utility.Command;
@@ -65,8 +67,7 @@ public class MultiPoolServer {
             try {
                 byte[] message = communication.receive();
                 Request request = new Deserialize<Request>(message).deserialize();
-                System.out.println(request.getTypeRequest());
-                System.out.println(request.getLogin() + " " + request.getPassword());
+                System.out.println(request.getTypeRequest()+" "+ request.getLogin() + " " + request.getPassword());
                 executePool.execute(new ExecuteTaskManager(request, commands));
             } catch (ClassNotFoundException | IOException e) {
                 System.out.println("ошибка десериализации");
@@ -130,6 +131,16 @@ public class MultiPoolServer {
                         }
                     }
 
+                } else if (request.getTypeRequest() == TypeRequest.REQUEST_STUDYGROUPS){
+
+                    System.out.println("отправил");
+                    ArrayList<StudyGroupWithKey> studyGroupWithKeys = new ArrayList<>();
+                    for (Map.Entry<String, StudyGroup> pair : collectionManager.getSortedStudyGroupList().entrySet()) {
+                        studyGroupWithKeys.add(new StudyGroupWithKey(pair.getKey(),pair.getValue()));
+                    }
+                    ResponseStudyGroups responseStudyGroups = new ResponseStudyGroups(studyGroupWithKeys);
+
+                    responsePool.execute(new ResponseTaskManager(responseStudyGroups));
                 }
             } catch (SQLException e) {
                 System.out.println(e.getMessage());

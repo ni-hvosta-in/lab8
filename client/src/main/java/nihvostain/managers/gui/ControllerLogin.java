@@ -78,10 +78,11 @@ public class ControllerLogin {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
         Parent root = fxmlLoader.load();
         ControllerMain controllerMain = fxmlLoader.getController();
-        controllerMain.setCommunication(communication);
+
         controllerMain.setLogin(login);
         controllerMain.setPassword(password);
-
+        controllerMain.setCommunication(communication);
+        controllerMain.startUpdates();
 
         LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
         commands.put("help", new HelpCommand(commands.values(), controllerMain.getResultLabel()));

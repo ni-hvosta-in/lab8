@@ -34,6 +34,9 @@ public class Request implements Serializable, RequestResponse {
         this.name = name;
         this.studyGroup = studyGroup;
     }
+    public Request(TypeRequest typeRequest) {
+        this.typeRequest = typeRequest;
+    }
 
     public Request(TypeRequest typeRequest, TypeCommand name) {
         this.typeRequest = typeRequest;
