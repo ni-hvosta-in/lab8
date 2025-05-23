@@ -88,7 +88,13 @@ public class ExecuteScriptCommand implements Command {
 
     @Override
     public InvalidParamMessage isValidParam(ArrayList<String> params) {
-        return InvalidParamMessage.TRUE;
+        try {
+            new Scanner(new File(params.get(0)));
+            return InvalidParamMessage.TRUE;
+        } catch (FileNotFoundException e) {
+            return InvalidParamMessage.FILENOTFOUND;
+        }
+
     }
 
     @Override

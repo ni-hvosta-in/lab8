@@ -22,6 +22,7 @@ public class ControllerOneField {
     private String fieldValue;
     private Command command;
     private String fieldName;
+    private TextArea resultLabel;
     @FXML public void setField(ActionEvent event) throws IOException, ClassNotFoundException, TimeoutException {
         fieldValue = fieldLabel.getText();
         ArrayList<String> args = new ArrayList<>();
@@ -31,6 +32,7 @@ public class ControllerOneField {
             stage.close();
         } else {
             fieldLabel.setStyle("-fx-text-box-border: #ff0000; -fx-focus-color: #ff0000;");
+            resultLabel.setText(command.isValidParam(args).getMessage());
         }
 
     }
@@ -46,5 +48,9 @@ public class ControllerOneField {
 
     public void setCommand(Command command) {
         this.command = command;
+    }
+
+    public void setResultLabel(TextArea resultLabel) {
+        this.resultLabel = resultLabel;
     }
 }

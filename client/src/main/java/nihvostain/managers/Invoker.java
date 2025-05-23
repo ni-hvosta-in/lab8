@@ -108,33 +108,33 @@ public class Invoker {
                                 }
                             }
                         } else if (fileFlag) {
-                            System.out.println("Неверные параметры для вызванной команды в скрипте");
+                            resulLabel.setText("Неверные параметры для вызванной команды в скрипте");
                             throw new InputFromScriptException();
                         } else {
                             try {
-                                System.out.println(command.isValidParam(tokens).getMessage());
+                                resulLabel.setText(command.isValidParam(tokens).getMessage());
                             } catch (ClassNotFoundException e) {
-                                System.out.println("ошибка передачи данных с сервера");
+                                resulLabel.setText("ошибка передачи данных с сервера");
                             }
                         }
                     } catch (ClassNotFoundException | StreamCorruptedException e) {
-                        System.out.println("ошибка передачи данных с сервера");
+                        resulLabel.setText("ошибка передачи данных с сервера");
                     } catch (TimeoutException e) {
-                        System.out.println("сервер временно не доступен");
+                        resulLabel.setText("сервер временно не доступен");
                     }
                 } else {
                     if (fileFlag){
-                        System.out.println("Неверные параметры для вызванной команды в скрипте");
+                        resulLabel.setText("Неверные параметры для вызванной команды в скрипте");
                         throw new InputFromScriptException();
                     }
-                    System.out.println("Неверные параметры для вызванной команды");
+                    resulLabel.setText("Неверные параметры для вызванной команды");
                 }
             } else {
                 if (fileFlag) {
-                    System.out.println("Неопознанная команда в скрипте");
+                    resulLabel.setText("Неопознанная команда в скрипте");
                     throw new InputFromScriptException();
                 }
-                System.out.println("такой команды нет, используйте команду help");
+                resulLabel.setText("такой команды нет, используйте команду help");
             }
             Console.write("~ ", (fileFlag & Invoker.depth != 1));
 

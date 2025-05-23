@@ -11,8 +11,8 @@ public enum InvalidParamMessage implements Serializable {
     NoKey("нет такого ключа"),
     NoID("нет такого id"),
     NotLongID("id должен быть Long"),
-    FALSE("все очень плохо");
-
+    FALSE("все очень плохо"),
+    FILENOTFOUND("нет файла с таким именем");
 
     private final String message;
 
