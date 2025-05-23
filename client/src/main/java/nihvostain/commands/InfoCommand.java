@@ -59,6 +59,11 @@ public class InfoCommand implements Command {
     }
 
     @Override
+    public String[] getParamsName() {
+        return null;
+    }
+
+    @Override
     public InvalidParamMessage isValidParam(ArrayList<String> params) {
         return InvalidParamMessage.TRUE;
     }

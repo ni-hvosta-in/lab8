@@ -65,6 +65,11 @@ public class InsertCommand implements Command {
     }
 
     @Override
+    public String[] getParamsName() {
+        return new String[]{"key"};
+    }
+
+    @Override
     public InvalidParamMessage isValidParam(ArrayList<String> params) throws IOException, ClassNotFoundException, TimeoutException {
         Request request = new Request(TypeRequest.REQUEST_PARAM, TypeCommand.INSERT, params);
         communication.send(request.addUser(login, password).serialize());

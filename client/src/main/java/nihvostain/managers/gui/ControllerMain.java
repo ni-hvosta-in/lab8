@@ -74,13 +74,25 @@ public class ControllerMain {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/onefieldset.fxml"));
             Parent root = fxmlLoader.load();
             ControllerOneField controllerOneField = fxmlLoader.getController();
-            controllerOneField.setFieldLabel(clicked.getText());
+            controllerOneField.setFieldLabel(command.getParamsName()[0]);
+            controllerOneField.setCommand(command);
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setTitle("Окно ввода");
             stage.initModality(Modality.APPLICATION_MODAL); // Блокирует родительское окно
             stage.showAndWait(); // Ожидание закрытия окна
             comm = comm +" "+ controllerOneField.getFieldValue();
+        } else if (command.getNeededArgsLen() == 12){
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
+            Parent root = fxmlLoader.load();
+            Controller12Field controller = fxmlLoader.getController();
+            controller.setFieldLabel(clicked.getText());
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Окно ввода");
+            stage.initModality(Modality.APPLICATION_MODAL); // Блокирует родительское окно
+            stage.showAndWait(); // Ожидание закрытия окна
+            comm = comm +" "+ controller.getFieldValue();
         }
         Scanner scanner = new Scanner(comm);
         resultLabel.setEditable(false);

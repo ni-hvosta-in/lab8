@@ -3,12 +3,9 @@ package nihvostain.managers.gui;
 import common.utility.InvalidParamMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import nihvostain.managers.Communication;
 import nihvostain.managers.Invoker;
 import nihvostain.utility.Command;
 
@@ -16,17 +13,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
-public class ControllerOneField {
+public class Controller12Field {
     @FXML private Label nameFieldLabel;
     @FXML private TextField fieldLabel;
     private String fieldValue;
-    private Command command;
     private String fieldName;
     @FXML public void setField(ActionEvent event) throws IOException, ClassNotFoundException, TimeoutException {
         fieldValue = fieldLabel.getText();
         ArrayList<String> args = new ArrayList<>();
         args.add(fieldValue);
         Stage stage = (Stage) fieldLabel.getScene().getWindow();
+        Command command = Invoker.getCommands().get(fieldName);
         if (command.isValidParam(args) == InvalidParamMessage.TRUE){
             stage.close();
         } else {
@@ -42,9 +39,5 @@ public class ControllerOneField {
 
     public String getFieldValue() {
         return fieldValue;
-    }
-
-    public void setCommand(Command command) {
-        this.command = command;
     }
 }

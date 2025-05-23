@@ -60,6 +60,11 @@ public class RemoveGreaterKeyCommand implements Command {
     }
 
     @Override
+    public String[] getParamsName() {
+        return new String[]{"key"};
+    }
+
+    @Override
     public InvalidParamMessage isValidParam(ArrayList<String> params) {
         return InvalidParamMessage.TRUE;
     }

@@ -71,6 +71,11 @@ public class UpdateCommand implements Command {
         return 1;
     }
 
+    @Override
+    public String[] getParamsName() {
+        return new String[]{"id"};
+    }
+
     /**
      * @param params массив параметров для команды
      * @return валидность этих параметров

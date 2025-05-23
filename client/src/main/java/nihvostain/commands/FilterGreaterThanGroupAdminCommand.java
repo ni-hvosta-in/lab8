@@ -67,6 +67,11 @@ public class FilterGreaterThanGroupAdminCommand implements Command {
     }
 
     @Override
+    public String[] getParamsName() {
+        return null;
+    }
+
+    @Override
     public InvalidParamMessage isValidParam(ArrayList<String> params) {
         return InvalidParamMessage.TRUE;
     }

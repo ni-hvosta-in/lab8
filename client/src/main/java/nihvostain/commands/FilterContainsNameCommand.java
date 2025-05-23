@@ -62,6 +62,11 @@ public class FilterContainsNameCommand implements Command {
     }
 
     @Override
+    public String[] getParamsName() {
+        return new String[]{"nameSubstring"};
+    }
+
+    @Override
     public InvalidParamMessage isValidParam(ArrayList<String> params) {
         return InvalidParamMessage.TRUE;
     }

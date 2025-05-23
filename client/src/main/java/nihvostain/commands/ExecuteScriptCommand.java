@@ -4,7 +4,6 @@ import common.exceptions.*;
 import common.managers.Request;
 import common.model.TypeOfElement;
 import common.utility.InvalidParamMessage;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import nihvostain.managers.Communication;
 import nihvostain.managers.Invoker;
@@ -80,6 +79,11 @@ public class ExecuteScriptCommand implements Command {
     @Override
     public Integer getNeededParamLen() {
         return 1;
+    }
+
+    @Override
+    public String[] getParamsName() {
+        return new String[]{"scriptName"};
     }
 
     @Override

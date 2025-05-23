@@ -60,6 +60,11 @@ public class ExitCommand implements Command {
     }
 
     @Override
+    public String[] getParamsName() {
+        return new String[0];
+    }
+
+    @Override
     public InvalidParamMessage isValidParam(ArrayList<String> params) {
         return InvalidParamMessage.TRUE;
     }

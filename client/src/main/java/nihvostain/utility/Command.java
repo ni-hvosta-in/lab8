@@ -34,6 +34,7 @@ public interface Command {
      */
     Integer getNeededParamLen();
 
+    String[] getParamsName();
     /**
      * @param params массив параметров для команды
      * @return валидность параметров
