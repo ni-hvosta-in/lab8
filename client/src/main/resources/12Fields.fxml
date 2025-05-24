@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nihvostain.managers.gui.Controller12Field">
+<VBox fx:id="VBoxRoot" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nihvostain.managers.gui.Controller12Field">
    <children>
       <HBox VBox.vgrow="ALWAYS">
          <children>
@@ -28,14 +28,6 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </HBox.margin>
             </TextField>
-            <Button fx:id="setFieldButton" mnemonicParsing="false" text="Button" onAction="#setField">
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </HBox.margin>
-            </Button>
          </children>
       </HBox>
       <HBox VBox.vgrow="ALWAYS">
@@ -98,7 +90,6 @@
             </TextField>
          </children>
       </HBox>
-      <HBox VBox.vgrow="ALWAYS" />
       <HBox VBox.vgrow="ALWAYS">
          <children>
             <Label fx:id="nameFieldLabel5" text="studentsCount">
@@ -231,5 +222,13 @@
             <ChoiceBox fx:id="hairColorEnum" />
          </children>
       </HBox>
+      <Button fx:id="setFieldButton" mnemonicParsing="false" onAction="#setField" text="Button">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" />
+         </VBox.margin>
+      </Button>
    </children>
 </VBox>

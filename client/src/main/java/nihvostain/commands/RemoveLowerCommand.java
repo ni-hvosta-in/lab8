@@ -61,7 +61,7 @@ public class RemoveLowerCommand implements Command {
 
     @Override
     public String[] getParamsName() {
-        return null;
+        return new String[]{""};
     }
 
     @Override

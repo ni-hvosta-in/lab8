@@ -10,6 +10,7 @@ import common.utility.Validable;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nihvostain.managers.Communication;
 import nihvostain.managers.Invoker;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeoutException;
 
 public class Controller12Field {
 
+    @FXML private VBox VBoxRoot;
     @FXML private Label nameFieldLabel;
     @FXML private TextField field1;
     @FXML private TextField field2;
@@ -35,27 +37,35 @@ public class Controller12Field {
     @FXML private TextField field10;
     @FXML private ChoiceBox<EyeColor> eyeColorEnum;
     @FXML private ChoiceBox<HairColor> hairColorEnum;
+    @FXML Button setFieldButton;
     private String fieldValue;
     private Communication communication;
     private Command command;
     private String login;
     private String password;
     private TextArea resultLabel;
+    private int removeRow;
+    private boolean inputPerson;
     @FXML public void setField(ActionEvent event) throws IOException, ClassNotFoundException, TimeoutException {
-        fieldValue = field1.getText().trim() + "\n"
-                + field2.getText().trim() + "\n"
-                + field3.getText().trim() + "\n"
-                + field4.getText().trim() + "\n"
-                + field5.getText().trim() + "\n";
-        if (formOfEducationEnum.getValue() != null) {
-            fieldValue += formOfEducationEnum.getValue().getForm() + "\n";
+        fieldValue = "";
+        if (!inputPerson) {
+            fieldValue = field1.getText().trim() + "\n"
+                    + field2.getText().trim() + "\n"
+                    + field3.getText().trim() + "\n"
+                    + field4.getText().trim() + "\n"
+                    + field5.getText().trim() + "\n";
+            if (formOfEducationEnum.getValue() != null) {
+                fieldValue += formOfEducationEnum.getValue().getForm() + "\n";
+            } else {
+                fieldValue += "\n";
+            }
+            if (semesterEnum.getValue() != null) {
+                fieldValue += semesterEnum.getValue().getSem() + "\n";
+            } else {
+                fieldValue += "\n";
+            }
         } else {
-            fieldValue += "\n";
-        }
-        if (semesterEnum.getValue() != null) {
-            fieldValue += semesterEnum.getValue().getSem() + "\n";
-        } else {
-            fieldValue += "\n";
+            fieldValue = "\n";
         }
         fieldValue += field8.getText() + "\n"
                 +field9.getText().trim() + "\n"
@@ -84,7 +94,13 @@ public class Controller12Field {
         map.put(hairColorEnum, new InputValidateHair(null));
 
         String wrongFields = "";
+        int i = 2;
         for (Map.Entry<Control, Validable> entry : map.entrySet()) {
+            if (i<=removeRow) {
+                i++;
+                continue;
+            }
+
             if (entry.getKey() instanceof TextField) {
                 try {
                     if (!entry.getValue().isValidate(((TextField) entry.getKey()).getText().trim())) {
@@ -118,7 +134,7 @@ public class Controller12Field {
                 field1.setStyle("-fx-text-box-border: #ff0000; -fx-focus-color: #ff0000;");
             }
         } else {
-            Stage stage = (Stage) field2.getScene().getWindow();
+            Stage stage = (Stage) setFieldButton.getScene().getWindow();
             stage.close();
         }
         //СОЗДАЮ STUDYGROUP мотрю на валидность формирую массив enum ответы на валидность
@@ -165,5 +181,13 @@ public class Controller12Field {
 
     public void setResultLabel(TextArea resultLabel) {
         this.resultLabel = resultLabel;
+    }
+    public void removeFirstHBox(){
+        VBoxRoot.getChildren().remove(0);
+        removeRow++;
+    }
+
+    public void setInputPerson(boolean inputPerson) {
+        this.inputPerson = inputPerson;
     }
 }

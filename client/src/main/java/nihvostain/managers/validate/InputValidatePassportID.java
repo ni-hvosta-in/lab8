@@ -36,6 +36,9 @@ public class InputValidatePassportID implements Validable {
     public boolean isValidate(String passportID) throws IOException, TimeoutException, ClassNotFoundException {
         ArrayList<String> passport = new ArrayList<>();
         passport.add(passportID);
+        if (passportID.length() < 5){
+            return false;
+        }
         Request request = new Request(TypeRequest.REQUEST_PASSPORT, passport);
         communication.send(request.addUser(login, password).serialize());
         InvalidParamMessage message = new Deserialize<ResponseParam>(communication.receive()).deserialize().getParam();

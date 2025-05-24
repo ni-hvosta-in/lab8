@@ -24,6 +24,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import nihvostain.managers.Communication;
@@ -45,7 +46,7 @@ public class ControllerMain {
     private Communication communication;
     private String login;
     private String password;
-
+    private Command command;
     @FXML private TableView<StudyGroupWithKey> studyGroups;
     @FXML private TableColumn<StudyGroupWithKey, Integer> keyColumn;
     @FXML private TableColumn<StudyGroupWithKey, Long> idColumn;
@@ -67,7 +68,7 @@ public class ControllerMain {
 
         Button clicked = (Button) actionEvent.getSource();
         System.out.println(clicked.getText());
-        Command command = Invoker.getCommands().get(clicked.getText());
+        command = Invoker.getCommands().get(clicked.getText());
         String comm = clicked.getText();
 
         if (command.getNeededArgsLen() == 1){
@@ -89,17 +90,7 @@ public class ControllerMain {
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
             Parent root = fxmlLoader.load();
-            Controller12Field controller = fxmlLoader.getController();
-            controller.setNameFieldLabel(command.getParamsName()[0]);
-            controller.setFormOfEducation();
-            controller.setSemesterEnum();
-            controller.setEyeColorEnum();
-            controller.setHairColorEnum();
-            controller.setLogin(login);
-            controller.setPassword(password);
-            controller.setCommunication(communication);
-            controller.setCommand(command);
-            controller.setResultLabel(resultLabel);
+            Controller12Field controller = getPreparedController(fxmlLoader.getController());
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setTitle("Окно ввода");
@@ -107,6 +98,36 @@ public class ControllerMain {
             stage.showAndWait(); // Ожидание закрытия окна
             comm = comm + " " + controller.getFieldValue();
 
+        } else if (command.getNeededArgsLen() == 11){
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
+            Parent root = fxmlLoader.load();
+            Controller12Field controller = getPreparedController(fxmlLoader.getController());
+            controller.removeFirstHBox();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Окно ввода");
+            stage.initModality(Modality.APPLICATION_MODAL); // Блокирует родительское окно
+            stage.showAndWait(); // Ожидание закрытия окна
+            comm = comm + " " + controller.getFieldValue();
+
+        } else if (command.getNeededArgsLen() == 5) {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
+            Parent root = fxmlLoader.load();
+            Controller12Field controller = getPreparedController(fxmlLoader.getController());
+            controller.removeFirstHBox();
+            controller.removeFirstHBox();
+            controller.removeFirstHBox();
+            controller.removeFirstHBox();
+            controller.removeFirstHBox();
+            controller.removeFirstHBox();
+            controller.removeFirstHBox();
+            controller.setInputPerson(true);
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Окно ввода");
+            stage.initModality(Modality.APPLICATION_MODAL); // Блокирует родительское окно
+            stage.showAndWait(); // Ожидание закрытия окна
+            comm = comm + " " + controller.getFieldValue();
         }
         Scanner scanner = new Scanner(comm);
         resultLabel.setEditable(false);
@@ -231,5 +252,21 @@ public class ControllerMain {
 
     public TextArea getResultLabel() {
         return resultLabel;
+    }
+
+    private Controller12Field getPreparedController (Controller12Field controller) {
+
+        controller.setNameFieldLabel(command.getParamsName()[0]);
+        controller.setFormOfEducation();
+        controller.setSemesterEnum();
+        controller.setEyeColorEnum();
+        controller.setHairColorEnum();
+        controller.setLogin(login);
+        controller.setPassword(password);
+        controller.setCommunication(communication);
+        controller.setCommand(command);
+        controller.setResultLabel(resultLabel);
+
+        return controller;
     }
 }
