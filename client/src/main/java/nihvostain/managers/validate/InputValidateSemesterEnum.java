@@ -56,4 +56,9 @@ public class InputValidateSemesterEnum implements Validable {
 
         return semester;
     }
+
+    @Override
+    public TypeWrongField getTypeWrongField() {
+        return TypeWrongField.WRONG_SEMESTER_ENUM;
+    }
 }

@@ -71,4 +71,9 @@ public class InputValidatePassportID implements Validable {
         } while (!fileFlag);
         return passportID;
     }
+
+    @Override
+    public TypeWrongField getTypeWrongField() {
+        return TypeWrongField.WRONG_PASSPORT_ID;
+    }
 }

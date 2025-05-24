@@ -64,4 +64,9 @@ public class InputValidateStudentCount implements Validable {
         } while (!fileFlag);
         return studentCount;
     }
+
+    @Override
+    public TypeWrongField getTypeWrongField() {
+        return TypeWrongField.WRONG_STUDENTS_COUNT;
+    }
 }

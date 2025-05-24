@@ -56,4 +56,9 @@ public class InputValidateX implements Validable {
         } while (!fileFlag);
         return x;
     }
+
+    @Override
+    public TypeWrongField getTypeWrongField() {
+        return TypeWrongField.WRONG_X;
+    }
 }

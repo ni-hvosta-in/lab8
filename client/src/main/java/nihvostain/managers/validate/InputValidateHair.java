@@ -57,4 +57,9 @@ public class InputValidateHair implements Validable {
 
         return hairColor;
     }
+
+    @Override
+    public TypeWrongField getTypeWrongField() {
+        return TypeWrongField.WRONG_HAIR;
+    }
 }

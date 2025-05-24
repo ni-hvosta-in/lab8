@@ -55,4 +55,9 @@ public class InputValidateNameP implements Validable {
         } while (!fileFlag);
         return name;
     }
+
+    @Override
+    public TypeWrongField getTypeWrongField() {
+        return TypeWrongField.WRONG_NAME_P;
+    }
 }

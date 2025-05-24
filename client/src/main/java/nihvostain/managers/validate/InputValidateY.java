@@ -61,4 +61,9 @@ public class InputValidateY implements Validable {
         } while (!fileFlag);
         return y;
     }
+
+    @Override
+    public TypeWrongField getTypeWrongField() {
+        return TypeWrongField.WRONG_Y;
+    }
 }

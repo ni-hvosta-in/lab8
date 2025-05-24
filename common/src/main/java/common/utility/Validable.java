@@ -24,4 +24,5 @@ public interface Validable {
      * @throws InputFromScriptException ошибка в скрипте
      */
     String inputValidate(boolean fileFlag) throws InputFromScriptException, IOException, ClassNotFoundException, TimeoutException;
+    TypeWrongField getTypeWrongField();
 }

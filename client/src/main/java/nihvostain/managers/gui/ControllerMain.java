@@ -71,6 +71,7 @@ public class ControllerMain {
         String comm = clicked.getText();
 
         if (command.getNeededArgsLen() == 1){
+
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/onefieldset.fxml"));
             Parent root = fxmlLoader.load();
             ControllerOneField controllerOneField = fxmlLoader.getController();
@@ -83,7 +84,9 @@ public class ControllerMain {
             stage.initModality(Modality.APPLICATION_MODAL); // Блокирует родительское окно
             stage.showAndWait(); // Ожидание закрытия окна
             comm = comm +" "+ controllerOneField.getFieldValue();
+
         } else if (command.getNeededArgsLen() == 12){
+
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
             Parent root = fxmlLoader.load();
             Controller12Field controller = fxmlLoader.getController();
@@ -92,13 +95,18 @@ public class ControllerMain {
             controller.setSemesterEnum();
             controller.setEyeColorEnum();
             controller.setHairColorEnum();
+            controller.setLogin(login);
+            controller.setPassword(password);
+            controller.setCommunication(communication);
+            controller.setCommand(command);
+            controller.setResultLabel(resultLabel);
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setTitle("Окно ввода");
             stage.initModality(Modality.APPLICATION_MODAL); // Блокирует родительское окно
             stage.showAndWait(); // Ожидание закрытия окна
             comm = comm + " " + controller.getFieldValue();
-            System.out.println(comm);
+
         }
         Scanner scanner = new Scanner(comm);
         resultLabel.setEditable(false);

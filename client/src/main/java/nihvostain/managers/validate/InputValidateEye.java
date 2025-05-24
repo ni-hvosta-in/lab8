@@ -60,4 +60,9 @@ public class InputValidateEye implements Validable {
 
         return eyeColor;
     }
+
+    @Override
+    public TypeWrongField getTypeWrongField() {
+        return TypeWrongField.WRONG_EYE;
+    }
 }

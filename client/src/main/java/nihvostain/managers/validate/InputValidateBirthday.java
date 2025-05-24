@@ -26,6 +26,9 @@ public class InputValidateBirthday implements Validable {
      */
     @Override
     public boolean isValidate(String birthdayRus) {
+        if (birthdayRus.isEmpty()){
+            return true;
+        }
         try {
             if (birthdayRus.length() == 25) {
                 String birthday;
@@ -66,5 +69,10 @@ public class InputValidateBirthday implements Validable {
             }
         } while (!fileFlag);
         return Person.convertBirthdayFromRus(birthdayRus);
+    }
+
+    @Override
+    public TypeWrongField getTypeWrongField() {
+        return TypeWrongField.WRONG_BIRTHDAY;
     }
 }

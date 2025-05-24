@@ -1,22 +1,23 @@
 package nihvostain.managers.gui;
 
+import common.exceptions.NoAdminException;
 import common.model.EyeColor;
 import common.model.FormOfEducation;
 import common.model.HairColor;
 import common.model.SemesterEnum;
 import common.utility.InvalidParamMessage;
+import common.utility.Validable;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Control;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
+import nihvostain.managers.Communication;
 import nihvostain.managers.Invoker;
+import nihvostain.managers.validate.*;
 import nihvostain.utility.Command;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 
 public class Controller12Field {
@@ -31,23 +32,90 @@ public class Controller12Field {
     @FXML private ChoiceBox<SemesterEnum> semesterEnum;
     @FXML private TextField field8;
     @FXML private TextField field9;
+    @FXML private TextField field10;
     @FXML private ChoiceBox<EyeColor> eyeColorEnum;
     @FXML private ChoiceBox<HairColor> hairColorEnum;
     private String fieldValue;
-
+    private Communication communication;
+    private Command command;
+    private String login;
+    private String password;
+    private TextArea resultLabel;
     @FXML public void setField(ActionEvent event) throws IOException, ClassNotFoundException, TimeoutException {
         fieldValue = field1.getText() + "\n"
                 + field2.getText() + "\n"
                 + field3.getText() + "\n"
                 + field4.getText() + "\n"
-                + field5.getText() + "\n"
-                + formOfEducationEnum.getValue().getForm() + "\n"
-                + semesterEnum.getValue().getSem() + "\n"
-                +field8.getText() + "\n"
+                + field5.getText() + "\n";
+        if (formOfEducationEnum.getValue() != null) {
+            fieldValue += formOfEducationEnum.getValue().getForm() + "\n";
+        } else {
+            fieldValue += "\n";
+        }
+        if (semesterEnum.getValue() != null) {
+            fieldValue += semesterEnum.getValue().getSem() + "\n";
+        } else {
+            fieldValue += "\n";
+        }
+        fieldValue += field8.getText() + "\n"
                 +field9.getText() + "\n"
-                + eyeColorEnum.getValue() + "\n"
-                + hairColorEnum.getValue();
+                + field10.getText() + "\n";
+        if (eyeColorEnum.getValue() != null) {
+            fieldValue += eyeColorEnum.getValue().getColor() + "\n";
+        } else {
+            fieldValue += "\n";
+        }
+        if (hairColorEnum.getValue() != null) {
+            fieldValue += hairColorEnum.getValue().getColor() + "\n";
+        } else {
+            fieldValue += "\n";
+        }
+        Map<Control, Validable> map = new LinkedHashMap<>();
+        map.put(field2, new InputValidateNameSt(null));
+        map.put(field3, new InputValidateX(null));
+        map.put(field4, new InputValidateY(null));
+        map.put(field5, new InputValidateStudentCount(null));
+        map.put(formOfEducationEnum, new InputValidateFormOfEducation(null));
+        map.put(semesterEnum, new InputValidateSemesterEnum(null));
+        map.put(field8, new InputValidateNameP(null));
+        map.put(field9, new InputValidateBirthday(null));
+        map.put(field10, new InputValidatePassportID(null, command.skipValidateField() ,communication, login, password));
+        map.put(eyeColorEnum, new InputValidateEye(null));
+        map.put(hairColorEnum, new InputValidateHair(null));
 
+        String wrongFields = "";
+        for (Map.Entry<Control, Validable> entry : map.entrySet()) {
+            if (entry.getKey() instanceof TextField) {
+                try {
+                    if (!entry.getValue().isValidate(((TextField) entry.getKey()).getText())) {
+                        entry.getKey().setStyle("-fx-text-box-border: #ff0000; -fx-focus-color: #ff0000;");
+                        wrongFields += entry.getValue().getTypeWrongField().getMessage() + "\n";
+                    } else {
+                        entry.getKey().setStyle("-fx-text-box-border: #00ff00; -fx-focus-color: #00ff00;");
+                    }
+                } catch (NoAdminException e) {
+                    System.out.println("нет админа");
+                    break;
+                }
+            } else if (entry.getKey() instanceof ChoiceBox) {
+                if (((ChoiceBox<?>) entry.getKey()).getValue() == null) {
+                    if (!entry.getValue().isValidate("")) {
+                        entry.getKey().setStyle("-fx-text-box-border: #ff0000; -fx-focus-color: #ff0000;");
+                        wrongFields += entry.getValue().getTypeWrongField().getMessage() + "\n";
+                    }
+                } else{
+                    entry.getKey().setStyle("-fx-text-box-border: #00ff00; -fx-focus-color: #00ff00;");
+
+                }
+            }
+        }
+        if (!wrongFields.isEmpty()){
+            resultLabel.setText(wrongFields);
+        } else {
+            Stage stage = (Stage) field2.getScene().getWindow();
+            stage.close();
+        }
+        //СОЗДАЮ STUDYGROUP мотрю на валидность формирую массив enum ответы на валидность
     }
 
 
@@ -71,5 +139,25 @@ public class Controller12Field {
 
     public String getFieldValue() {
         return fieldValue;
+    }
+
+    public void setCommunication(Communication communication) {
+        this.communication = communication;
+    }
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setResultLabel(TextArea resultLabel) {
+        this.resultLabel = resultLabel;
     }
 }

@@ -56,4 +56,9 @@ public class InputValidateFormOfEducation implements Validable {
 
         return formOfEducation;
     }
+
+    @Override
+    public TypeWrongField getTypeWrongField() {
+        return TypeWrongField.WRONG_FORM_OF_EDU;
+    }
 }

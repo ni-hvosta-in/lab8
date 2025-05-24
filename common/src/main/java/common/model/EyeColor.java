@@ -32,6 +32,9 @@ public enum EyeColor {
         return colorMap;
     }
 
+    public String getColor() {
+        return col;
+    }
     static public Map <String, EyeColor> getColorsFromDB(){
         Map <String, EyeColor> colorMap = new HashMap<>();
         colorMap.put(GREEN.toString(), GREEN);
