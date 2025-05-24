@@ -110,14 +110,15 @@ public class ControllerMain {
         }
         Scanner scanner = new Scanner(comm);
         resultLabel.setEditable(false);
-
+        System.out.println(comm);
         Invoker invoker = new Invoker(scanner, communication, login, password, resultLabel);
         invoker.setFileFlag(true);
         try {
             invoker.scanning();
         } catch (InputFromScriptException e) {
-            resultLabel.setText(e.getMessage());
+            throw new RuntimeException(e);
         }
+
     }
 
     @FXML private void initialize() {

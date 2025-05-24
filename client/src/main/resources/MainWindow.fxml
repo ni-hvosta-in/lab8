@@ -75,13 +75,13 @@
             <Button fx:id="showButton" mnemonicParsing="false" text="show" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" onAction="#execute" />
             <Button fx:id="infoButton" mnemonicParsing="false" text="info" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" onAction="#execute"/>
             <Button fx:id="insertButton" mnemonicParsing="false" text="insert" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER" onAction="#execute"/>
-            <Button fx:id="updateButton" mnemonicParsing="false" text="Button" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+            <Button fx:id="updateButton" mnemonicParsing="false" text="update" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.valignment="CENTER" onAction="#execute"/>
             <Button fx:id="removeKeyButton" mnemonicParsing="false" text="remove_key" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" onAction="#execute"/>
             <Button fx:id="clearButton" mnemonicParsing="false" text="clear" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" onAction="#execute"/>
             <Button fx:id="executeScriptButton" mnemonicParsing="false" text="execute_script" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" onAction="#execute"/>
             <Button fx:id="exitButton" mnemonicParsing="false" text="exit" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" onAction="#execute"/>
             <Button fx:id="removeLowerButton" mnemonicParsing="false" text="Button" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-            <Button fx:id="replaceIfGreaterButton" mnemonicParsing="false" text="Button" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            <Button fx:id="replaceIfGreaterButton" mnemonicParsing="false" text="replace_if_greater" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
             <Button fx:id="removeGreaterKeyButton" mnemonicParsing="false" text="remove_greater_key" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" onAction="#execute"/>
             <Button fx:id="groupCountingBySemesterEnumButton" mnemonicParsing="false" text="group_counting_by_semester_enum" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" onAction="#execute"/>
             <Button fx:id="filterContainsName" mnemonicParsing="false" text="filter_contains_name" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" onAction="#execute"/>

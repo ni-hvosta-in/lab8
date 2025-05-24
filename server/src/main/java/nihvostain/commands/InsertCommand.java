@@ -37,6 +37,7 @@ public class InsertCommand implements Command {
         try {
             long id = dataBasesManager.insertStudyGroup(key, request.getStudyGroup(), request.getLogin());
             request.getStudyGroup().setID(id);
+            StudyGroup.addId(id);
             collectionManager.insert(key, request.getStudyGroup());
             if (request.getStudyGroup().getGroupAdmin() != null) {
                 Person.addPassportID(request.getStudyGroup().getGroupAdmin().getPassportID());

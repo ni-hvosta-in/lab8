@@ -42,11 +42,11 @@ public class Controller12Field {
     private String password;
     private TextArea resultLabel;
     @FXML public void setField(ActionEvent event) throws IOException, ClassNotFoundException, TimeoutException {
-        fieldValue = field1.getText() + "\n"
-                + field2.getText() + "\n"
-                + field3.getText() + "\n"
-                + field4.getText() + "\n"
-                + field5.getText() + "\n";
+        fieldValue = field1.getText().trim() + "\n"
+                + field2.getText().trim() + "\n"
+                + field3.getText().trim() + "\n"
+                + field4.getText().trim() + "\n"
+                + field5.getText().trim() + "\n";
         if (formOfEducationEnum.getValue() != null) {
             fieldValue += formOfEducationEnum.getValue().getForm() + "\n";
         } else {
@@ -58,8 +58,8 @@ public class Controller12Field {
             fieldValue += "\n";
         }
         fieldValue += field8.getText() + "\n"
-                +field9.getText() + "\n"
-                + field10.getText() + "\n";
+                +field9.getText().trim() + "\n"
+                + field10.getText().trim() + "\n";
         if (eyeColorEnum.getValue() != null) {
             fieldValue += eyeColorEnum.getValue().getColor() + "\n";
         } else {
@@ -87,7 +87,7 @@ public class Controller12Field {
         for (Map.Entry<Control, Validable> entry : map.entrySet()) {
             if (entry.getKey() instanceof TextField) {
                 try {
-                    if (!entry.getValue().isValidate(((TextField) entry.getKey()).getText())) {
+                    if (!entry.getValue().isValidate(((TextField) entry.getKey()).getText().trim())) {
                         entry.getKey().setStyle("-fx-text-box-border: #ff0000; -fx-focus-color: #ff0000;");
                         wrongFields += entry.getValue().getTypeWrongField().getMessage() + "\n";
                     } else {
@@ -109,8 +109,14 @@ public class Controller12Field {
                 }
             }
         }
-        if (!wrongFields.isEmpty()){
-            resultLabel.setText(wrongFields);
+        ArrayList<String> args = new ArrayList<>();
+        args.add(field1.getText().trim());
+        InvalidParamMessage paramMessage = command.isValidParam(args);
+        if (!wrongFields.isEmpty() | paramMessage != InvalidParamMessage.TRUE){
+            resultLabel.setText(wrongFields + "\n" + paramMessage);
+            if (paramMessage != InvalidParamMessage.TRUE) {
+                field1.setStyle("-fx-text-box-border: #ff0000; -fx-focus-color: #ff0000;");
+            }
         } else {
             Stage stage = (Stage) field2.getScene().getWindow();
             stage.close();
