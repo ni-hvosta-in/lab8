@@ -22,7 +22,14 @@ public class DataBasesManager {
         ResultSet resultSet = statement.executeQuery();
         return resultSet.next();
     }
-
+    public String getLoginByKey(String key) throws SQLException {
+        String sql = "select login from StudyGroups where key = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, key);
+        ResultSet resultSet = statement.executeQuery();
+        resultSet.next();
+        return resultSet.getString("login");
+    }
     public boolean allowModification(String key, String login) throws SQLException {
         String sql = "select login from StudyGroups where key = ?";
         PreparedStatement statement = connection.prepareStatement(sql);

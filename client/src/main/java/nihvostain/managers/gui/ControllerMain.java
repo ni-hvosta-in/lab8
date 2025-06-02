@@ -61,7 +61,7 @@ public class ControllerMain {
     @FXML private TableColumn<StudyGroupWithKey, String> hairColorColumn;
     private GraphView graphView = new GraphView();
     private ObservableList<StudyGroupWithKey> groups = FXCollections.observableArrayList();
-    private List<StudyGroup> sG = new ArrayList<>();
+    private List<StudyGroupWithKey> sG = new ArrayList<>();
     private TableColumn<StudyGroupWithKey, ?> sortColumn = keyColumn;
     private TableColumn.SortType sortType = TableColumn.SortType.ASCENDING;
     @FXML public void execute(ActionEvent actionEvent) throws RecursionDepthExceededException, IOException {
@@ -128,24 +128,27 @@ public class ControllerMain {
     @FXML public void edit(ActionEvent actionEvent) throws IOException {
 
         StudyGroupWithKey studyGroupWithKey = studyGroups.getSelectionModel().getSelectedItem();
-        if (studyGroupWithKey != null){
-
-            String comm = "update";
-            command = Invoker.getCommands().get(comm);
-            comm += " " + studyGroupWithKey.getId();
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
-            Parent root = fxmlLoader.load();
-            Controller12Field controller = getPreparedController(fxmlLoader.getController());
-            controller.removeFirstHBox();
-            controller.setInputFromTableFlag(true);
-            showScene(root);
-            comm = comm + " " + controller.getFieldValue();
-            Scanner scanner = new Scanner(comm);
-            Invoker invoker = new Invoker(scanner, communication, login, password, resultLabel);
-            invoker.setFileFlag(true);
-            try {
-                invoker.scanning();
-            } catch (InputFromScriptException | RecursionDepthExceededException ignored) {
+        if (studyGroupWithKey != null ){
+            if (studyGroupWithKey.getLogin().equals(login)) {
+                String comm = "update";
+                command = Invoker.getCommands().get(comm);
+                comm += " " + studyGroupWithKey.getId();
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
+                Parent root = fxmlLoader.load();
+                Controller12Field controller = getPreparedController(fxmlLoader.getController());
+                controller.removeFirstHBox();
+                controller.setInputFromTableFlag(true);
+                showScene(root);
+                comm = comm + " " + controller.getFieldValue();
+                Scanner scanner = new Scanner(comm);
+                Invoker invoker = new Invoker(scanner, communication, login, password, resultLabel);
+                invoker.setFileFlag(true);
+                try {
+                    invoker.scanning();
+                } catch (InputFromScriptException | RecursionDepthExceededException ignored) {
+                }
+            } else {
+                resultLabel.setText("объект чужого пользователя");
             }
         }
     }
@@ -357,7 +360,7 @@ public class ControllerMain {
                     byte[] response = communication.receive();
                     ResponseStudyGroups data = new Deserialize<ResponseStudyGroups>(response).deserialize();
                     List<StudyGroupWithKey> newData = data.getStudyGroups();
-                    sG = newData.stream().map(StudyGroupWithKey::getStudyGroup).collect(Collectors.toList());
+                    sG = newData;
                     graphView.drawStudyGroups(sG);
                     groups.setAll(newData);
                     Platform.runLater(() -> {

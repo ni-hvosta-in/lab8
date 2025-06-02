@@ -6,9 +6,11 @@ import java.time.LocalDateTime;
 public class StudyGroupWithKey implements Serializable{
     private final String key;
     private final StudyGroup studyGroup;
-    public StudyGroupWithKey(String key, StudyGroup studyGroup) {
+    private final String login;
+    public StudyGroupWithKey(String key, StudyGroup studyGroup, String login) {
         this.studyGroup = studyGroup;
         this.key = key;
+        this.login = login;
     }
     public StudyGroup getStudyGroup() {
         return studyGroup;
@@ -43,5 +45,9 @@ public class StudyGroupWithKey implements Serializable{
 
     public FormOfEducation getFormOfEducation() {
         return this.studyGroup.getFormOfEducation();
+    }
+
+    public String getLogin() {
+        return login;
     }
 }

@@ -136,7 +136,7 @@ public class MultiPoolServer {
                     System.out.println("отправил");
                     ArrayList<StudyGroupWithKey> studyGroupWithKeys = new ArrayList<>();
                     for (Map.Entry<String, StudyGroup> pair : collectionManager.getSortedStudyGroupList().entrySet()) {
-                        studyGroupWithKeys.add(new StudyGroupWithKey(pair.getKey(),pair.getValue()));
+                        studyGroupWithKeys.add(new StudyGroupWithKey(pair.getKey(),pair.getValue(), dataBasesManager.getLoginByKey(pair.getKey())));
                     }
                     ResponseStudyGroups responseStudyGroups = new ResponseStudyGroups(studyGroupWithKeys);
 
