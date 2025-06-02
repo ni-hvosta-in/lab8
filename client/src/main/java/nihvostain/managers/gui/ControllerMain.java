@@ -4,6 +4,7 @@ import common.exceptions.InputFromScriptException;
 import common.exceptions.RecursionDepthExceededException;
 import common.managers.Deserialize;
 import common.managers.Request;
+import common.managers.RequestObj;
 import common.managers.ResponseStudyGroups;
 import common.model.Person;
 import common.model.StudyGroup;
@@ -28,6 +29,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import nihvostain.commands.RemoveKeyCommand;
 import nihvostain.managers.Communication;
 import nihvostain.managers.Invoker;
 import nihvostain.utility.Command;
@@ -79,11 +81,7 @@ public class ControllerMain {
             controllerOneField.setFieldLabel(command.getParamsName()[0]);
             controllerOneField.setCommand(command);
             controllerOneField.setResultLabel(resultLabel);
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Окно ввода");
-            stage.initModality(Modality.APPLICATION_MODAL); // Блокирует родительское окно
-            stage.showAndWait(); // Ожидание закрытия окна
+            showScene(root);
             comm = comm +" "+ controllerOneField.getFieldValue();
 
         } else if (command.getNeededArgsLen() == 12){
@@ -91,11 +89,7 @@ public class ControllerMain {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
             Parent root = fxmlLoader.load();
             Controller12Field controller = getPreparedController(fxmlLoader.getController());
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Окно ввода");
-            stage.initModality(Modality.APPLICATION_MODAL); // Блокирует родительское окно
-            stage.showAndWait(); // Ожидание закрытия окна
+            showScene(root);
             comm = comm + " " + controller.getFieldValue();
 
         } else if (command.getNeededArgsLen() == 11){
@@ -103,11 +97,7 @@ public class ControllerMain {
             Parent root = fxmlLoader.load();
             Controller12Field controller = getPreparedController(fxmlLoader.getController());
             controller.removeFirstHBox();
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Окно ввода");
-            stage.initModality(Modality.APPLICATION_MODAL); // Блокирует родительское окно
-            stage.showAndWait(); // Ожидание закрытия окна
+            showScene(root);
             comm = comm + " " + controller.getFieldValue();
 
         } else if (command.getNeededArgsLen() == 5) {
@@ -122,11 +112,7 @@ public class ControllerMain {
             controller.removeFirstHBox();
             controller.removeFirstHBox();
             controller.setInputPerson(true);
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Окно ввода");
-            stage.initModality(Modality.APPLICATION_MODAL); // Блокирует родительское окно
-            stage.showAndWait(); // Ожидание закрытия окна
+            showScene(root);
             comm = comm + " " + controller.getFieldValue();
         }
         Scanner scanner = new Scanner(comm);
@@ -141,7 +127,48 @@ public class ControllerMain {
         }
 
     }
+    @FXML public void edit(ActionEvent actionEvent) throws IOException {
 
+        StudyGroupWithKey studyGroupWithKey = studyGroups.getSelectionModel().getSelectedItem();
+        if (studyGroupWithKey != null){
+
+            String comm = "update";
+            command = Invoker.getCommands().get(comm);
+            comm += " " + studyGroupWithKey.getId();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
+            Parent root = fxmlLoader.load();
+            Controller12Field controller = getPreparedController(fxmlLoader.getController());
+            controller.removeFirstHBox();
+            controller.setInputFromTableFlag(true);
+            showScene(root);
+            comm = comm + " " + controller.getFieldValue();
+            Scanner scanner = new Scanner(comm);
+            Invoker invoker = new Invoker(scanner, communication, login, password, resultLabel);
+            invoker.setFileFlag(true);
+            try {
+                invoker.scanning();
+            } catch (InputFromScriptException | RecursionDepthExceededException ignored) {
+            }
+        }
+    }
+
+    @FXML public void delete(ActionEvent actionEvent){
+        StudyGroupWithKey studyGroupWithKey = studyGroups.getSelectionModel().getSelectedItem();
+        if (studyGroupWithKey != null){
+            String key = studyGroupWithKey.getKey();
+            ArrayList<String> args = new ArrayList<>();
+            args.add(key);
+            Command delete = new RemoveKeyCommand(communication, login, password);
+            try {
+                communication.send(delete.request(args).addUser(login, password).serialize());
+                delete.request(args);
+                byte[] message = communication.receive();
+                resultLabel.setText(new Deserialize<RequestObj>(message).deserialize().getRequest().toString());
+            } catch (IOException | ClassNotFoundException | TimeoutException e) {
+                resultLabel.setText(e.getMessage());
+            }
+        }
+    }
     @FXML private void initialize() {
         setupTableColumns();
         setSorting();
@@ -313,7 +340,7 @@ public class ControllerMain {
                     .stream()
                     .sorted(comparator)
                     .collect(Collectors.toList());
-            items.setAll(sorted);  // ⚠️ Ключевая строка: заменяем содержимое, не сам список
+            items.setAll(sorted);
             return true;
         });
     }
@@ -348,7 +375,7 @@ public class ControllerMain {
 
 
                     System.out.println("обновил");
-                    Thread.sleep(5000);
+                    Thread.sleep(10000);
                 }catch (IOException e) {
                     resultLabel.setText("Ошибка сериализации");
                 } catch (ClassNotFoundException e) {
@@ -395,5 +422,12 @@ public class ControllerMain {
         controller.setResultLabel(resultLabel);
 
         return controller;
+    }
+    private void showScene(Parent root){
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setTitle("Окно ввода");
+        stage.initModality(Modality.APPLICATION_MODAL); // Блокирует родительское окно
+        stage.showAndWait(); // Ожидание закрытия окна
     }
 }

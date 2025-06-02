@@ -46,6 +46,7 @@ public class Controller12Field {
     private TextArea resultLabel;
     private int removeRow;
     private boolean inputPerson;
+    private boolean inputFromTableFlag = false;
     @FXML public void setField(ActionEvent event) throws IOException, ClassNotFoundException, TimeoutException {
         fieldValue = "";
         if (!inputPerson) {
@@ -128,8 +129,12 @@ public class Controller12Field {
         ArrayList<String> args = new ArrayList<>();
         args.add(field1.getText().trim());
         InvalidParamMessage paramMessage = command.isValidParam(args);
-        if (!wrongFields.isEmpty() | paramMessage != InvalidParamMessage.TRUE){
-            resultLabel.setText(wrongFields + "\n" + paramMessage);
+        if ((!wrongFields.isEmpty() || (paramMessage != InvalidParamMessage.TRUE & !inputFromTableFlag))){
+            if (inputFromTableFlag) {
+                resultLabel.setText(wrongFields);
+            } else {
+                resultLabel.setText(wrongFields + paramMessage.getMessage());
+            }
             if (paramMessage != InvalidParamMessage.TRUE) {
                 field1.setStyle("-fx-text-box-border: #ff0000; -fx-focus-color: #ff0000;");
             }
@@ -189,5 +194,9 @@ public class Controller12Field {
 
     public void setInputPerson(boolean inputPerson) {
         this.inputPerson = inputPerson;
+    }
+
+    public void setInputFromTableFlag(boolean inputFromTableFlag) {
+        this.inputFromTableFlag = inputFromTableFlag;
     }
 }
