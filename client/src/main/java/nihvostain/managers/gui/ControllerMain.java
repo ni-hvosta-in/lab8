@@ -233,41 +233,77 @@ public class ControllerMain {
             TableColumn<StudyGroupWithKey, ?> sortColumn = tv.getSortOrder().get(0);
             this.sortColumn = sortColumn;
             this.sortType = sortColumn.getSortType();
-            Comparable<?> valA = null;
-            Comparable<?> valB = null;
-            try {
-                if (sortColumn == keyColumn) {
 
-                    comparator = Comparator.comparing(StudyGroupWithKey::getKey);
-                } else if (sortColumn == idColumn) {
-                    comparator = Comparator.comparing(StudyGroupWithKey::getId);
-                } else if (sortColumn == nameColumn) {
-                    comparator = Comparator.comparing(StudyGroupWithKey::getName);
-                } else if (sortColumn == xColumn) {
-                    comparator = Comparator.comparing(studyGroupWithKey -> studyGroupWithKey.getCoordinates().getX());
-                } else if (sortColumn == yColumn) {
-                    comparator = Comparator.comparing(studyGroupWithKey -> studyGroupWithKey.getCoordinates().getY());
-                } else if (sortColumn == creationDateColumn) {
-                    comparator = Comparator.comparing(StudyGroupWithKey::getCreationDate);
-                } else if (sortColumn == studentsCountColumn) {
-                    comparator = Comparator.comparing(StudyGroupWithKey::getStudentsCount);
-                } else if (sortColumn == formOfEducationColumn) {
-                    comparator = Comparator.comparing(StudyGroupWithKey::getFormOfEducation);
-                } else if (sortColumn == semesterEnumColumn) {
-                    comparator = Comparator.comparing(StudyGroupWithKey::getSemesterEnum);
-                } else if (sortColumn == namePColumn) {
-                    comparator = Comparator.comparing(studyGroupWithKey -> studyGroupWithKey.getGroupAdmin().getName());
-                } else if (sortColumn == birthdayColumn) {
-                    comparator = Comparator.comparing(studyGroupWithKey -> studyGroupWithKey.getGroupAdmin().getBirthday());
-                } else if (sortColumn == passportIdColumn) {
-                    comparator = Comparator.comparing(studyGroupWithKey -> studyGroupWithKey.getGroupAdmin().getPassportID());
-                } else if (sortColumn == eyeColorColumn) {
-                    comparator = Comparator.comparing(studyGroupWithKey -> studyGroupWithKey.getGroupAdmin().getEyeColor());
-                } else if (sortColumn == hairColorColumn) {
-                    comparator = Comparator.comparing(studyGroupWithKey -> studyGroupWithKey.getGroupAdmin().getHairColor());
-                }
-            } catch (NullPointerException e) {
-                comparator = (a, b) -> 0;
+            if (sortColumn == keyColumn) {
+                comparator = Comparator.comparing(
+                        StudyGroupWithKey::getKey,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
+            } else if (sortColumn == idColumn) {
+                comparator = Comparator.comparing(
+                        StudyGroupWithKey::getId,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
+            } else if (sortColumn == nameColumn) {
+                comparator = Comparator.comparing(
+                        StudyGroupWithKey::getName,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
+            } else if (sortColumn == xColumn) {
+                comparator = Comparator.comparing(
+                        sg -> sg.getCoordinates() != null ? sg.getCoordinates().getX() : null,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
+            } else if (sortColumn == yColumn) {
+                comparator = Comparator.comparing(
+                        sg -> sg.getCoordinates() != null ? sg.getCoordinates().getY() : null,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
+            } else if (sortColumn == creationDateColumn) {
+                comparator = Comparator.comparing(
+                        StudyGroupWithKey::getCreationDate,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
+            } else if (sortColumn == studentsCountColumn) {
+                comparator = Comparator.comparing(
+                        StudyGroupWithKey::getStudentsCount,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
+            } else if (sortColumn == formOfEducationColumn) {
+                comparator = Comparator.comparing(
+                        StudyGroupWithKey::getFormOfEducation,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
+            } else if (sortColumn == semesterEnumColumn) {
+                comparator = Comparator.comparing(
+                        StudyGroupWithKey::getSemesterEnum,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
+            } else if (sortColumn == namePColumn) {
+                comparator = Comparator.comparing(
+                        sg -> sg.getGroupAdmin() != null ? sg.getGroupAdmin().getName() : null,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
+            } else if (sortColumn == birthdayColumn) {
+                comparator = Comparator.comparing(
+                        sg -> sg.getGroupAdmin() != null ? sg.getGroupAdmin().getBirthday() : null,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
+            } else if (sortColumn == passportIdColumn) {
+                comparator = Comparator.comparing(
+                        sg -> sg.getGroupAdmin() != null ? sg.getGroupAdmin().getPassportID() : null,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
+            } else if (sortColumn == eyeColorColumn) {
+                comparator = Comparator.comparing(
+                        sg -> sg.getGroupAdmin() != null ? sg.getGroupAdmin().getEyeColor() : null,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
+            } else if (sortColumn == hairColorColumn) {
+                comparator = Comparator.comparing(
+                        sg -> sg.getGroupAdmin() != null ? sg.getGroupAdmin().getHairColor() : null,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                );
             }
 
             if (sortColumn.getSortType() == TableColumn.SortType.DESCENDING) {
