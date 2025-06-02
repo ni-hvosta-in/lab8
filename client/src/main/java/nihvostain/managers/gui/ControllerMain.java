@@ -15,10 +15,7 @@ import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,7 +23,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import nihvostain.commands.RemoveKeyCommand;
@@ -63,7 +59,9 @@ public class ControllerMain {
     @FXML private TableColumn<StudyGroupWithKey, String> passportIdColumn;
     @FXML private TableColumn<StudyGroupWithKey, String> eyeColorColumn;
     @FXML private TableColumn<StudyGroupWithKey, String> hairColorColumn;
+    private GraphView graphView = new GraphView();
     private ObservableList<StudyGroupWithKey> groups = FXCollections.observableArrayList();
+    private List<StudyGroup> sG = new ArrayList<>();
     private TableColumn<StudyGroupWithKey, ?> sortColumn = keyColumn;
     private TableColumn.SortType sortType = TableColumn.SortType.ASCENDING;
     @FXML public void execute(ActionEvent actionEvent) throws RecursionDepthExceededException, IOException {
@@ -122,8 +120,8 @@ public class ControllerMain {
         invoker.setFileFlag(true);
         try {
             invoker.scanning();
-        } catch (InputFromScriptException e) {
-            throw new RuntimeException(e);
+        } catch (InputFromScriptException | NoSuchElementException ignored) {
+
         }
 
     }
@@ -169,6 +167,11 @@ public class ControllerMain {
             }
         }
     }
+
+    @FXML public void visualize(ActionEvent actionEvent){
+        graphView.show();
+    }
+
     @FXML private void initialize() {
         setupTableColumns();
         setSorting();
@@ -354,8 +357,8 @@ public class ControllerMain {
                     byte[] response = communication.receive();
                     ResponseStudyGroups data = new Deserialize<ResponseStudyGroups>(response).deserialize();
                     List<StudyGroupWithKey> newData = data.getStudyGroups();
-
-
+                    sG = newData.stream().map(StudyGroupWithKey::getStudyGroup).collect(Collectors.toList());
+                    graphView.drawStudyGroups(sG);
                     groups.setAll(newData);
                     Platform.runLater(() -> {
                                 // Сохраняем состояние сортировки перед обновлением
