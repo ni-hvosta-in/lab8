@@ -14,6 +14,7 @@ import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -34,11 +35,9 @@ import nihvostain.utility.Command;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 public class ControllerMain {
     @FXML private Label loginLabel;
@@ -62,8 +61,9 @@ public class ControllerMain {
     @FXML private TableColumn<StudyGroupWithKey, String> passportIdColumn;
     @FXML private TableColumn<StudyGroupWithKey, String> eyeColorColumn;
     @FXML private TableColumn<StudyGroupWithKey, String> hairColorColumn;
-
     private ObservableList<StudyGroupWithKey> groups = FXCollections.observableArrayList();
+    private TableColumn<StudyGroupWithKey, ?> sortColumn = keyColumn;
+    private TableColumn.SortType sortType = TableColumn.SortType.ASCENDING;
     @FXML public void execute(ActionEvent actionEvent) throws RecursionDepthExceededException, IOException {
 
         Button clicked = (Button) actionEvent.getSource();
@@ -144,6 +144,7 @@ public class ControllerMain {
 
     @FXML private void initialize() {
         setupTableColumns();
+        setSorting();
     }
 
     private void setupTableColumns() {
@@ -204,6 +205,83 @@ public class ControllerMain {
 
     }
 
+    private void setSorting(){
+        keyColumn.setSortable(true);
+        idColumn.setSortable(true);
+        nameColumn.setSortable(true);
+        xColumn.setSortable(true);
+        yColumn.setSortable(true);
+        creationDateColumn.setSortable(true);
+        studentsCountColumn.setSortable(true);
+        formOfEducationColumn.setSortable(true);
+        semesterEnumColumn.setSortable(true);
+        namePColumn.setSortable(true);
+        birthdayColumn.setSortable(true);
+        passportIdColumn.setSortable(true);
+        eyeColorColumn.setSortable(true);
+        hairColorColumn.setSortable(true);
+
+
+        studyGroups.setSortPolicy(tv -> {
+            ObservableList<StudyGroupWithKey> items = tv.getItems();
+            Comparator<StudyGroupWithKey> comparator = null;
+            if (tv.getSortOrder().isEmpty()) {
+                sortType = null;
+                return true;
+            }
+
+            TableColumn<StudyGroupWithKey, ?> sortColumn = tv.getSortOrder().get(0);
+            this.sortColumn = sortColumn;
+            this.sortType = sortColumn.getSortType();
+            Comparable<?> valA = null;
+            Comparable<?> valB = null;
+            try {
+                if (sortColumn == keyColumn) {
+
+                    comparator = Comparator.comparing(StudyGroupWithKey::getKey);
+                } else if (sortColumn == idColumn) {
+                    comparator = Comparator.comparing(StudyGroupWithKey::getId);
+                } else if (sortColumn == nameColumn) {
+                    comparator = Comparator.comparing(StudyGroupWithKey::getName);
+                } else if (sortColumn == xColumn) {
+                    comparator = Comparator.comparing(studyGroupWithKey -> studyGroupWithKey.getCoordinates().getX());
+                } else if (sortColumn == yColumn) {
+                    comparator = Comparator.comparing(studyGroupWithKey -> studyGroupWithKey.getCoordinates().getY());
+                } else if (sortColumn == creationDateColumn) {
+                    comparator = Comparator.comparing(StudyGroupWithKey::getCreationDate);
+                } else if (sortColumn == studentsCountColumn) {
+                    comparator = Comparator.comparing(StudyGroupWithKey::getStudentsCount);
+                } else if (sortColumn == formOfEducationColumn) {
+                    comparator = Comparator.comparing(StudyGroupWithKey::getFormOfEducation);
+                } else if (sortColumn == semesterEnumColumn) {
+                    comparator = Comparator.comparing(StudyGroupWithKey::getSemesterEnum);
+                } else if (sortColumn == namePColumn) {
+                    comparator = Comparator.comparing(studyGroupWithKey -> studyGroupWithKey.getGroupAdmin().getName());
+                } else if (sortColumn == birthdayColumn) {
+                    comparator = Comparator.comparing(studyGroupWithKey -> studyGroupWithKey.getGroupAdmin().getBirthday());
+                } else if (sortColumn == passportIdColumn) {
+                    comparator = Comparator.comparing(studyGroupWithKey -> studyGroupWithKey.getGroupAdmin().getPassportID());
+                } else if (sortColumn == eyeColorColumn) {
+                    comparator = Comparator.comparing(studyGroupWithKey -> studyGroupWithKey.getGroupAdmin().getEyeColor());
+                } else if (sortColumn == hairColorColumn) {
+                    comparator = Comparator.comparing(studyGroupWithKey -> studyGroupWithKey.getGroupAdmin().getHairColor());
+                }
+            } catch (NullPointerException e) {
+                comparator = (a, b) -> 0;
+            }
+
+            if (sortColumn.getSortType() == TableColumn.SortType.DESCENDING) {
+                comparator = comparator.reversed();
+            }
+            List<StudyGroupWithKey> sorted = tv.getItems()
+                    .stream()
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+            items.setAll(sorted);  // ⚠️ Ключевая строка: заменяем содержимое, не сам список
+            return true;
+        });
+    }
+
     public void startUpdates() {
         Thread updateThread = new Thread(() -> {
             while (true) {
@@ -216,10 +294,24 @@ public class ControllerMain {
 
 
                     groups.setAll(newData);
-                    studyGroups.setItems(groups);
-                    System.out.println("Обновлено: " + newData.size() + " элементов");
+                    Platform.runLater(() -> {
+                                // Сохраняем состояние сортировки перед обновлением
+                                // Обновляем данные
+                                groups.setAll(newData);
+                                studyGroups.setItems(groups);
+
+                                // Восстанавливаем сортировку
+
+                                if (sortType != null) {
+                                    studyGroups.getSortOrder().clear();
+                                    studyGroups.getSortOrder().add(sortColumn);
+                                    sortColumn.setSortType(sortType);
+                                    studyGroups.sort();
+                                }
+                            });
 
 
+                    System.out.println("обновил");
                     Thread.sleep(5000);
                 }catch (IOException e) {
                     resultLabel.setText("Ошибка сериализации");
@@ -235,7 +327,6 @@ public class ControllerMain {
         updateThread.setDaemon(true);
         updateThread.start();
     }
-
 
     public void setCommunication(Communication communication) {
         this.communication = communication;

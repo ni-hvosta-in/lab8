@@ -39,8 +39,8 @@
           <TableColumn fx:id="nameColumn" minWidth="50.0" prefWidth="-1.0" text="name" />
             <TableColumn fx:id="xColumn" minWidth="50.0" prefWidth="-1.0" text="x" />
             <TableColumn fx:id="yColumn" minWidth="50.0" prefWidth="-1.0" text="y" />
+            <TableColumn fx:id="studentsCountColumn" minWidth="50" prefWidth="-1.0" text="studentsCount" />
             <TableColumn fx:id="creationDateColumn" minWidth="50.0" prefWidth="-1.0" text="creationDate" />
-            <TableColumn fx:id="studentsCountColumn" maxWidth="-1.0" minWidth="-1.0" prefWidth="-1.0" text="studentsCount" />
             <TableColumn fx:id="formOfEducationColumn" minWidth="50.0" prefWidth="-1.0" text="formOfEducation" />
             <TableColumn fx:id="semesterEnumColumn" minWidth="50.0" prefWidth="-1.0" text="semesterEnum" />
             <TableColumn fx:id="namePColumn" minWidth="50.0" prefWidth="-1.0" text="nameP" />
