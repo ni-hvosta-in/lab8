@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 
 public class ControllerMain {
     @FXML private Label loginLabel;
-    @FXML private TextArea resultLabel;
+    @FXML private TextArea resultLabel = null;
     private Communication communication;
     private String login;
     private String password;
@@ -178,6 +178,7 @@ public class ControllerMain {
     @FXML private void initialize() {
         setupTableColumns();
         setSorting();
+        graphView.setResultLabel(resultLabel);
     }
 
     private void setupTableColumns() {
