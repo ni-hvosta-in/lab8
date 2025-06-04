@@ -83,36 +83,19 @@ public class ControllerMain {
             showScene(root);
             comm = comm +" "+ controllerOneField.getFieldValue();
 
-        } else if (command.getNeededArgsLen() == 12){
-
+        } else {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
             Parent root = fxmlLoader.load();
             Controller12Field controller = getPreparedController(fxmlLoader.getController());
+            for (int i = 0; i < 12-command.getNeededArgsLen(); i++) {
+                controller.removeFirstHBox();
+            }
+            if (command.getNeededArgsLen() == 5) {
+                controller.setInputPerson(true);
+            }
             showScene(root);
             comm = comm + " " + controller.getFieldValue();
 
-        } else if (command.getNeededArgsLen() == 11){
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
-            Parent root = fxmlLoader.load();
-            Controller12Field controller = getPreparedController(fxmlLoader.getController());
-            controller.removeFirstHBox();
-            showScene(root);
-            comm = comm + " " + controller.getFieldValue();
-
-        } else if (command.getNeededArgsLen() == 5) {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
-            Parent root = fxmlLoader.load();
-            Controller12Field controller = getPreparedController(fxmlLoader.getController());
-            controller.removeFirstHBox();
-            controller.removeFirstHBox();
-            controller.removeFirstHBox();
-            controller.removeFirstHBox();
-            controller.removeFirstHBox();
-            controller.removeFirstHBox();
-            controller.removeFirstHBox();
-            controller.setInputPerson(true);
-            showScene(root);
-            comm = comm + " " + controller.getFieldValue();
         }
         Scanner scanner = new Scanner(comm);
         resultLabel.setEditable(false);
@@ -121,10 +104,16 @@ public class ControllerMain {
         invoker.setFileFlag(true);
         try {
             invoker.scanning();
+            updateData();
         } catch (InputFromScriptException | NoSuchElementException ignored) {
 
+        }catch (IOException e) {
+            resultLabel.setText("Ошибка сериализации");
+        } catch (ClassNotFoundException e) {
+            resultLabel.setText("Ошибка десериализации");
+        } catch (TimeoutException e) {
+            resultLabel.setText("Сервер временно не доступен");
         }
-
     }
     @FXML public void edit(ActionEvent actionEvent) throws IOException {
 
@@ -146,7 +135,9 @@ public class ControllerMain {
                 invoker.setFileFlag(true);
                 try {
                     invoker.scanning();
-                } catch (InputFromScriptException | RecursionDepthExceededException ignored) {
+                    updateData();
+                } catch (InputFromScriptException | RecursionDepthExceededException | ClassNotFoundException |
+                         TimeoutException ignored) {
                 }
             } else {
                 resultLabel.setText("объект чужого пользователя");
@@ -166,6 +157,7 @@ public class ControllerMain {
                 delete.request(args);
                 byte[] message = communication.receive();
                 resultLabel.setText(new Deserialize<RequestObj>(message).deserialize().getRequest().toString());
+                updateData();
             } catch (IOException | ClassNotFoundException | TimeoutException e) {
                 resultLabel.setText(e.getMessage());
             }
@@ -357,33 +349,7 @@ public class ControllerMain {
         Thread updateThread = new Thread(() -> {
             while (true) {
                 try {
-                    byte[] request = new Request(TypeRequest.REQUEST_STUDYGROUPS).addUser(login, password).serialize();
-                    communication.send(request);
-                    byte[] response = communication.receive();
-                    ResponseStudyGroups data = new Deserialize<ResponseStudyGroups>(response).deserialize();
-                    List<StudyGroupWithKey> newData = data.getStudyGroups();
-                    sG = newData;
-                    if (!isEqualsStudyGroups(sG, sGOld)) {
-                        graphView.drawStudyGroups(sG);
-                        Platform.runLater(() -> {
-                            // Сохраняем состояние сортировки перед обновлением
-                            // Обновляем данные
-                            groups.setAll(newData);
-                            studyGroups.setItems(groups);
-
-                            // Восстанавливаем сортировку
-
-                            if (sortType != null) {
-                                studyGroups.getSortOrder().clear();
-                                studyGroups.getSortOrder().add(sortColumn);
-                                sortColumn.setSortType(sortType);
-                                studyGroups.sort();
-                            }
-                        });
-
-                        sGOld = sG;
-                        System.out.println("обновил");
-                    }
+                    updateData();
                     Thread.sleep(10000);
                 }catch (IOException e) {
                     resultLabel.setText("Ошибка сериализации");
@@ -457,4 +423,35 @@ public class ControllerMain {
         }
         return ans == sG1.size();
     }
+
+    private void updateData() throws IOException, TimeoutException, ClassNotFoundException {
+        byte[] request = new Request(TypeRequest.REQUEST_STUDYGROUPS).addUser(login, password).serialize();
+        communication.send(request);
+        byte[] response = communication.receive();
+        ResponseStudyGroups data = new Deserialize<ResponseStudyGroups>(response).deserialize();
+        List<StudyGroupWithKey> newData = data.getStudyGroups();
+        sG = newData;
+        if (!isEqualsStudyGroups(sG, sGOld)) {
+            graphView.drawStudyGroups(sG);
+            Platform.runLater(() -> {
+                // Сохраняем состояние сортировки перед обновлением
+                // Обновляем данные
+
+                groups.setAll(newData);
+                studyGroups.setItems(groups);
+
+                // Восстанавливаем сортировку
+
+                if (sortType != null) {
+                    studyGroups.getSortOrder().clear();
+                    studyGroups.getSortOrder().add(sortColumn);
+                    sortColumn.setSortType(sortType);
+                    studyGroups.sort();
+                }
+            });
+
+            sGOld = sG;
+            System.out.println("обновил");
+    }
+        }
 }
