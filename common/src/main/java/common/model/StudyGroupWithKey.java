@@ -50,4 +50,11 @@ public class StudyGroupWithKey implements Serializable{
     public String getLogin() {
         return login;
     }
+
+    public boolean equals(StudyGroupWithKey studyGroupWithKey) {
+        System.out.println(studyGroupWithKey.getStudyGroup().equals(this.studyGroup));
+        return (studyGroupWithKey.getKey().equals(this.key)
+                && studyGroupWithKey.getStudyGroup().equals(this.studyGroup)
+                && studyGroupWithKey.getLogin().equals(this.login));
+    }
 }

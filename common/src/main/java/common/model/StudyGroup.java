@@ -322,6 +322,10 @@ public class StudyGroup implements Comparable <StudyGroup>, ValidateClass, Seria
         this.groupAdmin = groupAdmin;
     }
 
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
     /**
      * @return валидно ли Id
      */
@@ -398,4 +402,9 @@ public class StudyGroup implements Comparable <StudyGroup>, ValidateClass, Seria
         this.id = id;
     }
 
+    public boolean equals(StudyGroup o) {
+        System.out.println(this.coordinates.getX() + " " + this.coordinates.getY());
+        System.out.println(this.coordinates.getY() == o.getCoordinates().getY());
+        return this.id.equals(o.getId()) && this.coordinates.getX().equals(o.getCoordinates().getX()) && this.coordinates.getY() == o.getCoordinates().getY();
+    }
 }

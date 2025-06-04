@@ -62,6 +62,7 @@ public class ControllerMain {
     private GraphView graphView = new GraphView();
     private ObservableList<StudyGroupWithKey> groups = FXCollections.observableArrayList();
     private List<StudyGroupWithKey> sG = new ArrayList<>();
+    private List<StudyGroupWithKey> sGOld = new ArrayList<>();
     private TableColumn<StudyGroupWithKey, ?> sortColumn = keyColumn;
     private TableColumn.SortType sortType = TableColumn.SortType.ASCENDING;
     @FXML public void execute(ActionEvent actionEvent) throws RecursionDepthExceededException, IOException {
@@ -362,26 +363,27 @@ public class ControllerMain {
                     ResponseStudyGroups data = new Deserialize<ResponseStudyGroups>(response).deserialize();
                     List<StudyGroupWithKey> newData = data.getStudyGroups();
                     sG = newData;
-                    graphView.drawStudyGroups(sG);
-                    groups.setAll(newData);
-                    Platform.runLater(() -> {
-                                // Сохраняем состояние сортировки перед обновлением
-                                // Обновляем данные
-                                groups.setAll(newData);
-                                studyGroups.setItems(groups);
+                    if (!isEqualsStudyGroups(sG, sGOld)) {
+                        graphView.drawStudyGroups(sG);
+                        Platform.runLater(() -> {
+                            // Сохраняем состояние сортировки перед обновлением
+                            // Обновляем данные
+                            groups.setAll(newData);
+                            studyGroups.setItems(groups);
 
-                                // Восстанавливаем сортировку
+                            // Восстанавливаем сортировку
 
-                                if (sortType != null) {
-                                    studyGroups.getSortOrder().clear();
-                                    studyGroups.getSortOrder().add(sortColumn);
-                                    sortColumn.setSortType(sortType);
-                                    studyGroups.sort();
-                                }
-                            });
+                            if (sortType != null) {
+                                studyGroups.getSortOrder().clear();
+                                studyGroups.getSortOrder().add(sortColumn);
+                                sortColumn.setSortType(sortType);
+                                studyGroups.sort();
+                            }
+                        });
 
-
-                    System.out.println("обновил");
+                        sGOld = sG;
+                        System.out.println("обновил");
+                    }
                     Thread.sleep(10000);
                 }catch (IOException e) {
                     resultLabel.setText("Ошибка сериализации");
@@ -436,5 +438,23 @@ public class ControllerMain {
         stage.setTitle("Окно ввода");
         stage.initModality(Modality.APPLICATION_MODAL); // Блокирует родительское окно
         stage.showAndWait(); // Ожидание закрытия окна
+    }
+    private boolean isEqualsStudyGroups(List<StudyGroupWithKey> sG1, List<StudyGroupWithKey> sG2) {
+        int ans = 0;
+
+        if (sG1.size() != sG2.size()) {
+            return false;
+        } else {
+            for (int i = 0; i < sG1.size(); i++) {
+                System.out.println(sG1.get(i).getStudyGroup().toString());
+                System.out.println(sG2.get(i).getStudyGroup().toString());
+                if (!sG1.get(i).equals(sG2.get(i))) {
+                    return false;
+                } else {
+                    ans++;
+                }
+            }
+        }
+        return ans == sG1.size();
     }
 }
