@@ -12,7 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +24,7 @@ public class GraphView {
     private final int canvasH = 600;
     private final GraphicsContext gc ;
     private List<StudyGroupWithKey> studyGroups;
-    private final List<AnimatedStudyGroup> animatedGroups = new ArrayList<>();
+    private final Map<String, AnimatedStudyGroup> animatedGroups = new HashMap<>();
     public GraphView() {
 
         stage = new Stage();
@@ -54,7 +54,7 @@ public class GraphView {
     }
 
     private class AnimatedStudyGroup {
-        private final StudyGroupWithKey studyGroup;
+        private StudyGroupWithKey studyGroup;
         float currentX, currentY;
         float targetX, targetY;
 
@@ -73,20 +73,28 @@ public class GraphView {
             float dist = (float) Math.sqrt(dx * dx + dy * dy);
 
             if (dist <= speed) {
-                // доехали — устанавливаем точно в цель
                 currentX = targetX;
                 currentY = targetY;
                 return false;
             }
 
-            // движемся с постоянной скоростью
             float vx = dx / dist * speed;
             float vy = dy / dist * speed;
             currentX += vx;
             currentY += vy;
+            //еще кто-то движется
             return true;
         }
 
+        public void setTargetX(float targetX) {
+            this.targetX = targetX;
+        }
+        public void setTargetY(float targetY) {
+            this.targetY = targetY;
+        }
+        public void setStudyGroup(StudyGroupWithKey studyGroup) {
+            this.studyGroup = studyGroup;
+        }
     }
 
     private StudyGroupWithKey getStudyGroupByCoordinates(double x, double y) {
@@ -102,14 +110,23 @@ public class GraphView {
     }
     public void drawStudyGroups(List<StudyGroupWithKey> studyGroups) {
         this.studyGroups = studyGroups;
-        animatedGroups.clear();
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         drawAxes(gc);
         for (StudyGroupWithKey studyGroup : studyGroups) {
-
-            AnimatedStudyGroup animatedStudyGroup = new AnimatedStudyGroup(studyGroup);
-            animatedGroups.add(animatedStudyGroup);
+            String key = studyGroup.getKey();
+            if (animatedGroups.containsKey(key)) { //если такой ключ есть, то есть меняем координаты
+                animatedGroups.get(key).setTargetX(calculateX(studyGroup.getCoordinates().getX()));
+                animatedGroups.get(key).setTargetY(calculateY(studyGroup.getCoordinates().getY()));
+                animatedGroups.get(key).setStudyGroup(studyGroup);
+            } else { //если такого ключа нет, просто добавляем в мапу
+                animatedGroups.put(key, new AnimatedStudyGroup(studyGroup));
+            }
         }
+        // Удалим отсутствующие
+        animatedGroups.keySet().removeIf(oldKey ->
+                studyGroups.stream().noneMatch(g -> g.getKey().equals(oldKey))
+        );
+
         animateAll();
     }
 
@@ -120,16 +137,20 @@ public class GraphView {
                 gc.clearRect(0, 0, canvasW, canvasH);
                 drawAxes(gc);
 
-                boolean stillAnimating = false;
+                boolean animInProc = false;
 
-                for (AnimatedStudyGroup anim : animatedGroups) {
-                    if (anim.update()) stillAnimating = true;
+                for (AnimatedStudyGroup anim : animatedGroups.values()) {
+                    if (anim.update()){
+                        animInProc = true;
+                    }
 
                     drawStudyGroup(gc, anim.studyGroup.getStudyGroup(), anim.studyGroup.getLogin(), anim.currentX, anim.currentY);
 
                 }
 
-                if (!stillAnimating) stop();
+                if (!animInProc) {
+                    stop();
+                }
             }
         };
 
