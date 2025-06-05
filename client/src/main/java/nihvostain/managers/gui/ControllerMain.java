@@ -7,7 +7,6 @@ import common.managers.Request;
 import common.managers.RequestObj;
 import common.managers.ResponseStudyGroups;
 import common.model.Person;
-import common.model.StudyGroup;
 import common.model.StudyGroupWithKey;
 import common.utility.TypeRequest;
 import javafx.application.Platform;
@@ -83,7 +82,7 @@ public class ControllerMain {
             showScene(root);
             comm = comm +" "+ controllerOneField.getFieldValue();
 
-        } else {
+        } else if (command.getNeededArgsLen() > 1){
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
             Parent root = fxmlLoader.load();
             Controller12Field controller = getPreparedController(fxmlLoader.getController());
@@ -115,33 +114,11 @@ public class ControllerMain {
             resultLabel.setText("Сервер временно не доступен");
         }
     }
-    @FXML public void edit(ActionEvent actionEvent) throws IOException {
+    @FXML public void edit() throws IOException {
 
         StudyGroupWithKey studyGroupWithKey = studyGroups.getSelectionModel().getSelectedItem();
         if (studyGroupWithKey != null ){
-            if (studyGroupWithKey.getLogin().equals(login)) {
-                String comm = "update";
-                command = Invoker.getCommands().get(comm);
-                comm += " " + studyGroupWithKey.getId();
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
-                Parent root = fxmlLoader.load();
-                Controller12Field controller = getPreparedController(fxmlLoader.getController());
-                controller.removeFirstHBox();
-                controller.setInputFromTableFlag(true);
-                showScene(root);
-                comm = comm + " " + controller.getFieldValue();
-                Scanner scanner = new Scanner(comm);
-                Invoker invoker = new Invoker(scanner, communication, login, password, resultLabel);
-                invoker.setFileFlag(true);
-                try {
-                    invoker.scanning();
-                    updateData();
-                } catch (InputFromScriptException | RecursionDepthExceededException | ClassNotFoundException |
-                         TimeoutException ignored) {
-                }
-            } else {
-                resultLabel.setText("объект чужого пользователя");
-            }
+            updateStudyGroup(studyGroupWithKey);
         }
     }
 
@@ -165,13 +142,35 @@ public class ControllerMain {
     }
 
     @FXML public void visualize(ActionEvent actionEvent){
-        graphView.show();
+        if (!graphView.getStage().isShowing()) {
+            graphView.show();
+        } else {
+            graphView.getStage().close();
+        }
     }
 
     @FXML private void initialize() {
         setupTableColumns();
         setSorting();
-        graphView.setResultLabel(resultLabel);
+
+        graphView.getCanvas().setOnMouseClicked(event -> {
+            double x = event.getX();
+            double y = event.getY();
+            StudyGroupWithKey studyGroupWithKey = graphView.getStudyGroupByCoordinates(x, y);
+            if (studyGroupWithKey != null) {
+                if (event.getClickCount() == 1) {
+                    resultLabel.setText(studyGroupWithKey.getStudyGroup().toString());
+                } else if (event.getClickCount() == 2) {
+                    try {
+                        updateStudyGroup(studyGroupWithKey);
+                    } catch (IOException ignored) {
+                    }
+                }
+            } else {
+                resultLabel.clear();
+            }
+        });
+
     }
 
     private void setupTableColumns() {
@@ -412,8 +411,7 @@ public class ControllerMain {
             return false;
         } else {
             for (int i = 0; i < sG1.size(); i++) {
-                System.out.println(sG1.get(i).getStudyGroup().toString());
-                System.out.println(sG2.get(i).getStudyGroup().toString());
+
                 if (!sG1.get(i).equals(sG2.get(i))) {
                     return false;
                 } else {
@@ -423,7 +421,31 @@ public class ControllerMain {
         }
         return ans == sG1.size();
     }
-
+    private void updateStudyGroup(StudyGroupWithKey studyGroupWithKey) throws IOException {
+        if (studyGroupWithKey.getLogin().equals(login)) {
+            String comm = "update";
+            command = Invoker.getCommands().get(comm);
+            comm += " " + studyGroupWithKey.getId();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
+            Parent root = fxmlLoader.load();
+            Controller12Field controller = getPreparedController(fxmlLoader.getController());
+            controller.removeFirstHBox();
+            controller.setInputFromTableFlag(true);
+            showScene(root);
+            comm = comm + " " + controller.getFieldValue();
+            Scanner scanner = new Scanner(comm);
+            Invoker invoker = new Invoker(scanner, communication, login, password, resultLabel);
+            invoker.setFileFlag(true);
+            try {
+                invoker.scanning();
+                updateData();
+            } catch (InputFromScriptException | RecursionDepthExceededException | ClassNotFoundException |
+                     TimeoutException ignored) {
+            }
+        } else {
+            resultLabel.setText("объект чужого пользователя");
+        }
+    }
     private void updateData() throws IOException, TimeoutException, ClassNotFoundException {
         byte[] request = new Request(TypeRequest.REQUEST_STUDYGROUPS).addUser(login, password).serialize();
         communication.send(request);

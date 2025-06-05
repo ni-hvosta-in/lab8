@@ -19,7 +19,6 @@ import java.util.Map;
 public class GraphView {
     private final Stage stage;
     private final Canvas canvas;
-    private TextArea resultLabel;
     private final int canvasW = 800;
     private final int canvasH = 600;
     private final GraphicsContext gc ;
@@ -31,16 +30,6 @@ public class GraphView {
         stage.setTitle("Graph View");
 
         canvas = new Canvas(canvasW, canvasH);
-        canvas.setOnMouseClicked(event -> {
-            double x = event.getX();
-            double y = event.getY();
-            StudyGroupWithKey studyGroupWithKey = getStudyGroupByCoordinates(x, y);
-            if (studyGroupWithKey != null) {
-                resultLabel.setText(studyGroupWithKey.getStudyGroup().toString());
-            } else {
-                resultLabel.clear();
-            }
-        });
 
         StackPane root = new StackPane(canvas);
 
@@ -51,6 +40,10 @@ public class GraphView {
 
     public void show() {
         stage.show();
+    }
+
+    public Canvas getCanvas() {
+        return canvas;
     }
 
     private class AnimatedStudyGroup {
@@ -97,7 +90,7 @@ public class GraphView {
         }
     }
 
-    private StudyGroupWithKey getStudyGroupByCoordinates(double x, double y) {
+    public StudyGroupWithKey getStudyGroupByCoordinates(double x, double y) {
         for (StudyGroupWithKey studyGroupWithKey : studyGroups) {
             float sGX = calculateX(studyGroupWithKey.getCoordinates().getX());
             float sGY = calculateY(studyGroupWithKey.getCoordinates().getY());
@@ -197,8 +190,7 @@ public class GraphView {
     private float calculateY(float y) {
         return canvasH / 2f - y;
     }
-
-    public void setResultLabel(TextArea resultLabel) {
-        this.resultLabel = resultLabel;
+    public Stage getStage() {
+        return stage;
     }
 }
