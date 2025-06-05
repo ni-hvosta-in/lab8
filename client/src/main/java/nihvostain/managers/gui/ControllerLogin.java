@@ -27,15 +27,17 @@ public class ControllerLogin {
     @FXML public Label labelState;
     @FXML public Button authButton;
     @FXML public Button registButton;
-    @FXML public ChoiceBox languageList;
+    @FXML public ChoiceBox<String> languageList;
     @FXML private TextField loginField;
     @FXML private PasswordField passwordField;
     private Communication communication;
     private String login;
     private String password;
+    private Locale currentLocale = new Locale("ru");
 
     @FXML private void loginButtonAction(ActionEvent actionEvent) throws NoSuchAlgorithmException, IOException {
 
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale);
         Button clicked = (Button) actionEvent.getSource();
         labelState.setText("");
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -65,30 +67,38 @@ public class ControllerLogin {
                 Stage stage = (Stage) authButton.getScene().getWindow();
                 stage.close();
             } else {
-                labelState.setText(message.toString());
+                labelState.setText(resourceBundle.getString(message.getMessage()));
             }
         } catch (TimeoutException e) {
-            labelState.setText("сервер временно не доступен");
+            labelState.setText(resourceBundle.getString("server.timeOut"));
         } catch (ClassNotFoundException e) {
-            labelState.setText("ошибка передачи данных, попробуйте снова");
+            labelState.setText(resourceBundle.getString("data.error"));
         }
     }
 
     @FXML public void initialize() {
         languageList.getItems().clear();
         languageList.getItems().addAll("Русский", "Slovenski");
-        languageList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            Locale locale;
-            if ("Slovenski".equals(newVal)) {
-                locale = new Locale("sl");
-            } else {
-                locale = new Locale("ru");
-            }
-            // Обновить окно с новым ResourceBundle
-            reloadWindow(locale);
 
+        if (currentLocale.getLanguage().equals("sl")) {
+            languageList.setValue("Slovenski");
+        } else {
+            languageList.setValue("Русский");
+        }
+
+        languageList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !newVal.equals(oldVal)) {
+                Locale locale;
+                if ("Slovenski".equals(newVal)) {
+                    locale = new Locale("sl");
+                } else {
+                    locale = new Locale("ru");
+                }
+                reloadWindow(locale);
+            }
         });
     }
+
     public void openMainWindow() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
         Parent root = fxmlLoader.load();
@@ -128,18 +138,34 @@ public class ControllerLogin {
     public void setCommunication(Communication communication) {
         this.communication = communication;
     }
+
+    public void setCurrentLocale(Locale locale) {
+        this.currentLocale = locale;
+    }
+
     private void reloadWindow(Locale locale) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lab8auth2.fxml"));
         fxmlLoader.setResources(ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", locale));
-        Parent root = null;
+
+        // Контроллер с нужной локалью и передачей communication
+        fxmlLoader.setControllerFactory(controllerClass -> {
+            try {
+                ControllerLogin controller = (ControllerLogin) controllerClass.getDeclaredConstructor().newInstance();
+                controller.setCommunication(communication);
+                controller.setCurrentLocale(locale);  // Устанавливаем локаль до initialize()
+                return controller;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        Parent root;
         try {
-            root = fxmlLoader.load();
+            root = fxmlLoader.load();  // initialize() вызовется с нужной локалью
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        ControllerLogin controllerLogin = fxmlLoader.getController();
-        controllerLogin.setCommunication(communication);
-        // Настройка сцены и отображение окна
+
         Scene scene = new Scene(root);
         Stage stage = (Stage) languageList.getScene().getWindow();
         stage.setTitle("Авторизация");

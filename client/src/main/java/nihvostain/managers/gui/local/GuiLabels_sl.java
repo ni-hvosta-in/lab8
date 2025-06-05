@@ -9,7 +9,11 @@ public class GuiLabels_sl extends ListResourceBundle {
                 {"button.auth", "Prijava"},
                 {"button.reg", "Registracija"},
                 {"label.login", "Uporabniško ime"},
-                {"label.password", "Geslo"}
+                {"label.password", "Geslo"},
+                {"server.timeOut", "strežnik trenutno ni na voljo"},
+                {"wrong.login", "nepravilno uporabniško ime"},
+                {"wrong.password", "nepravilno geslo"},
+                {"data.error", "napaka pri prenosu podatkov, poskusite znova"}
         };
     }
 }
