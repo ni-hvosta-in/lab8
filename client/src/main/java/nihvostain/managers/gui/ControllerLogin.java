@@ -7,10 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import nihvostain.commands.*;
 import nihvostain.managers.Communication;
@@ -22,12 +19,15 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.concurrent.TimeoutException;
 
 public class ControllerLogin {
     @FXML public Label labelState;
     @FXML public Button authButton;
     @FXML public Button registButton;
+    @FXML public ChoiceBox languageList;
     @FXML private TextField loginField;
     @FXML private PasswordField passwordField;
     private Communication communication;
@@ -74,6 +74,21 @@ public class ControllerLogin {
         }
     }
 
+    @FXML public void initialize() {
+        languageList.getItems().clear();
+        languageList.getItems().addAll("Русский", "Slovenski");
+        languageList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            Locale locale;
+            if ("Slovenski".equals(newVal)) {
+                locale = new Locale("sl");
+            } else {
+                locale = new Locale("ru");
+            }
+            // Обновить окно с новым ResourceBundle
+            reloadWindow(locale);
+
+        });
+    }
     public void openMainWindow() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
         Parent root = fxmlLoader.load();
@@ -112,5 +127,23 @@ public class ControllerLogin {
 
     public void setCommunication(Communication communication) {
         this.communication = communication;
+    }
+    private void reloadWindow(Locale locale) {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lab8auth2.fxml"));
+        fxmlLoader.setResources(ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", locale));
+        Parent root = null;
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        ControllerLogin controllerLogin = fxmlLoader.getController();
+        controllerLogin.setCommunication(communication);
+        // Настройка сцены и отображение окна
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) languageList.getScene().getWindow();
+        stage.setTitle("Авторизация");
+        stage.setScene(scene);
+        stage.show();
     }
 }

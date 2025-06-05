@@ -57,6 +57,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lab8auth2.fxml"));
+        fxmlLoader.setResources(ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", new Locale("ru")));
         Parent root = fxmlLoader.load();
         ControllerLogin controllerLogin = fxmlLoader.getController();
         controllerLogin.setCommunication(communication);
