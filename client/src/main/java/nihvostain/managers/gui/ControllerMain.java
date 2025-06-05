@@ -22,6 +22,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import nihvostain.commands.RemoveKeyCommand;
@@ -43,6 +44,7 @@ public class ControllerMain {
     private String login;
     private String password;
     private Command command;
+    private final ContextMenu contextMenu = new ContextMenu();
     @FXML private TableView<StudyGroupWithKey> studyGroups;
     @FXML private TableColumn<StudyGroupWithKey, Integer> keyColumn;
     @FXML private TableColumn<StudyGroupWithKey, Long> idColumn;
@@ -122,22 +124,10 @@ public class ControllerMain {
         }
     }
 
-    @FXML public void delete(ActionEvent actionEvent){
+    @FXML public void delete(){
         StudyGroupWithKey studyGroupWithKey = studyGroups.getSelectionModel().getSelectedItem();
         if (studyGroupWithKey != null){
-            String key = studyGroupWithKey.getKey();
-            ArrayList<String> args = new ArrayList<>();
-            args.add(key);
-            Command delete = new RemoveKeyCommand(communication, login, password);
-            try {
-                communication.send(delete.request(args).addUser(login, password).serialize());
-                delete.request(args);
-                byte[] message = communication.receive();
-                resultLabel.setText(new Deserialize<RequestObj>(message).deserialize().getRequest().toString());
-                updateData();
-            } catch (IOException | ClassNotFoundException | TimeoutException e) {
-                resultLabel.setText(e.getMessage());
-            }
+            deleteStudyGroup(studyGroupWithKey);
         }
     }
 
@@ -156,15 +146,34 @@ public class ControllerMain {
         graphView.getCanvas().setOnMouseClicked(event -> {
             double x = event.getX();
             double y = event.getY();
+            contextMenu.hide();
+            contextMenu.getItems().clear();
             StudyGroupWithKey studyGroupWithKey = graphView.getStudyGroupByCoordinates(x, y);
             if (studyGroupWithKey != null) {
-                if (event.getClickCount() == 1) {
-                    resultLabel.setText(studyGroupWithKey.getStudyGroup().toString());
-                } else if (event.getClickCount() == 2) {
-                    try {
-                        updateStudyGroup(studyGroupWithKey);
-                    } catch (IOException ignored) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    if (event.getClickCount() == 1) {
+                        resultLabel.setText(studyGroupWithKey.getStudyGroup().toString());
+                    } else if (event.getClickCount() == 2) {
+                        try {
+                            updateStudyGroup(studyGroupWithKey);
+                        } catch (IOException ignored) {
+                        }
                     }
+                } else if (event.getButton() == MouseButton.SECONDARY) {
+                    MenuItem editItem = new MenuItem("edit");
+                    editItem.setOnAction(e -> {
+                        try {
+                            updateStudyGroup(studyGroupWithKey);
+                        } catch (IOException ignored) {
+                        }
+                    });
+                    MenuItem delItem = new MenuItem("delete");
+                    delItem.setOnAction(e -> {
+                        deleteStudyGroup(studyGroupWithKey);
+                    });
+                    contextMenu.getItems().add(editItem);
+                    contextMenu.getItems().add(delItem);
+                    contextMenu.show(graphView.getCanvas(), event.getScreenX(), event.getScreenY());
                 }
             } else {
                 resultLabel.clear();
@@ -444,6 +453,22 @@ public class ControllerMain {
             }
         } else {
             resultLabel.setText("объект чужого пользователя");
+        }
+    }
+    private void deleteStudyGroup(StudyGroupWithKey studyGroupWithKey){
+
+        String key = studyGroupWithKey.getKey();
+        ArrayList<String> args = new ArrayList<>();
+        args.add(key);
+        Command delete = new RemoveKeyCommand(communication, login, password);
+        try {
+            communication.send(delete.request(args).addUser(login, password).serialize());
+            delete.request(args);
+            byte[] message = communication.receive();
+            resultLabel.setText(new Deserialize<RequestObj>(message).deserialize().getRequest().toString());
+            updateData();
+        } catch (IOException | ClassNotFoundException | TimeoutException e) {
+            resultLabel.setText(e.getMessage());
         }
     }
     private void updateData() throws IOException, TimeoutException, ClassNotFoundException {
