@@ -166,7 +166,7 @@ public class ControllerMain {
         loginLabel.setText(login);
         setupTableColumns();
         setSorting();
-
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale);
         graphView.getCanvas().setOnMouseClicked(event -> {
             double x = event.getX();
             double y = event.getY();
@@ -184,14 +184,14 @@ public class ControllerMain {
                         }
                     }
                 } else if (event.getButton() == MouseButton.SECONDARY) {
-                    MenuItem editItem = new MenuItem("edit");
+                    MenuItem editItem = new MenuItem(resourceBundle.getString("edit"));
                     editItem.setOnAction(e -> {
                         try {
                             updateStudyGroup(studyGroupWithKey);
                         } catch (IOException ignored) {
                         }
                     });
-                    MenuItem delItem = new MenuItem("delete");
+                    MenuItem delItem = new MenuItem(resourceBundle.getString("delete"));
                     delItem.setOnAction(e -> {
                         deleteStudyGroup(studyGroupWithKey);
                     });
@@ -463,6 +463,7 @@ public class ControllerMain {
             command = Invoker.getCommands().get(comm);
             comm += " " + studyGroupWithKey.getId();
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
+            fxmlLoader.setResources(ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale));
             Parent root = fxmlLoader.load();
             Controller12Field controller = getPreparedController(fxmlLoader.getController());
             controller.removeFirstHBox();
@@ -536,17 +537,21 @@ public class ControllerMain {
 
     private void reloadWindow(Locale locale) {
         System.out.println("обновляю" + locale);
+        currentLocale = locale;
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
         fxmlLoader.setResources(ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", locale));
-
+        if (graphView.getStage().isShowing()) {
+            graphView.getStage().close();
+        }
         // Контроллер с нужной локалью и передачей communication
         fxmlLoader.setControllerFactory(controllerClass -> {
             try {
                 ControllerMain controllerMain = (ControllerMain) controllerClass.getDeclaredConstructor().newInstance();
+                controllerMain.setCurrentLocale(currentLocale);
+
                 controllerMain.setLogin(login);
                 controllerMain.setPassword(password);
                 controllerMain.setCommunication(communication);
-                controllerMain.setCurrentLocale(currentLocale);
                 controllerMain.startUpdates();
 
                 controllerMain.setCurrentLocale(locale);  // Устанавливаем локаль до initialize()
@@ -571,6 +576,7 @@ public class ControllerMain {
             loginLabel.setText(login);
             stage.show();
         }
+
     }
 
     public ChoiceBox<String> getLanguageList() {
