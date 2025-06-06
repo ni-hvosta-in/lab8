@@ -22,7 +22,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </HBox.margin>
             </Label>
-            <ChoiceBox prefWidth="150.0">
+            <ChoiceBox prefWidth="150.0" fx:id="languageList">
                <HBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </HBox.margin>
@@ -72,30 +72,30 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="helpButton" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="help" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-            <Button fx:id="showButton" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="show" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-            <Button fx:id="infoButton" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="info" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-            <Button fx:id="insertButton" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="insert" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-            <Button fx:id="updateButton" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="update" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-            <Button fx:id="removeKeyButton" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="remove_key" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
-            <Button fx:id="clearButton" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="clear" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
-            <Button fx:id="executeScriptButton" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="execute_script" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
-            <Button fx:id="exitButton" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="exit" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
-            <Button fx:id="removeLowerButton" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="remove_lower" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
-            <Button fx:id="replaceIfGreaterButton" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="replace_if_greater" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-            <Button fx:id="removeGreaterKeyButton" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="remove_greater_key" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-            <Button fx:id="groupCountingBySemesterEnumButton" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="group_counting_by_semester_enum" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-            <Button fx:id="filterContainsName" minWidth="51.0" mnemonicParsing="false" onAction="#execute" text="filter_contains_name" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-            <Button fx:id="filterGreaterThanGroupAdmin" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="filter_greater_than_group_admin" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+            <Button fx:id="help" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="%help" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            <Button fx:id="show" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="%show" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            <Button fx:id="info" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="%info" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            <Button fx:id="insert" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="%insert" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            <Button fx:id="update" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="%update" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            <Button fx:id="remove_key" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="%remove_key" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+            <Button fx:id="clear" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="%clear" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+            <Button fx:id="execute_script" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="%execute_script" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+            <Button fx:id="exit" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="%exit" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+            <Button fx:id="remove_lower" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="%remove_lower" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+            <Button fx:id="replace_if_greater" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="%replace_if_greater" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+            <Button fx:id="remove_greater_key" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="%remove_greater_key" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+            <Button fx:id="group_counting_by_semester_enum" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="%group_counting_by_semester_enum" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+            <Button fx:id="filter_contains_name" minWidth="51.0" mnemonicParsing="false" onAction="#execute" text="%filter_contains_name" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+            <Button fx:id="filter_greater_than_group_admin" minWidth="50.0" mnemonicParsing="false" onAction="#execute" text="%filter_greater_than_group_admin" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
             <TextArea fx:id="resultLabel" prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="5" GridPane.rowIndex="5" GridPane.rowSpan="2" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2">
                <children>
-                  <Button fx:id="editButton" minWidth="50.0" mnemonicParsing="false" onAction="#edit" text="edit">
+                  <Button fx:id="editButton" minWidth="50.0" mnemonicParsing="false" onAction="#edit" text="%edit">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="deleteButton" minWidth="50.0" mnemonicParsing="false" onAction="#delete" text="delete">
+                  <Button fx:id="deleteButton" minWidth="50.0" mnemonicParsing="false" onAction="#delete" text="%delete">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
@@ -108,7 +108,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </HBox>
-            <Button fx:id="vizualize" minWidth="200.0" mnemonicParsing="false" text="visualize" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" onAction="#visualize"/>
+            <Button fx:id="vizualize" minWidth="200.0" mnemonicParsing="false" text="%visualize" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" onAction="#visualize"/>
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

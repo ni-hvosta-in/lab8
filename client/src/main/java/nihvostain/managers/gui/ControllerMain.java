@@ -38,10 +38,11 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 public class ControllerMain {
+    public ChoiceBox<String> languageList;
     @FXML private Label loginLabel;
     @FXML private TextArea resultLabel = null;
     private Communication communication;
-    private String login;
+    private String login = "";
     private String password;
     private Command command;
     private final ContextMenu contextMenu = new ContextMenu();
@@ -60,6 +61,7 @@ public class ControllerMain {
     @FXML private TableColumn<StudyGroupWithKey, String> passportIdColumn;
     @FXML private TableColumn<StudyGroupWithKey, String> eyeColorColumn;
     @FXML private TableColumn<StudyGroupWithKey, String> hairColorColumn;
+    private Locale currentLocale = new Locale("ru");
     private GraphView graphView = new GraphView();
     private ObservableList<StudyGroupWithKey> groups = FXCollections.observableArrayList();
     private List<StudyGroupWithKey> sG = new ArrayList<>();
@@ -69,9 +71,8 @@ public class ControllerMain {
     @FXML public void execute(ActionEvent actionEvent) throws RecursionDepthExceededException, IOException {
 
         Button clicked = (Button) actionEvent.getSource();
-        System.out.println(clicked.getText());
-        command = Invoker.getCommands().get(clicked.getText());
-        String comm = clicked.getText();
+        command = Invoker.getCommands().get(clicked.getId());
+        String comm = clicked.getId();
 
         if (command.getNeededArgsLen() == 1){
 
@@ -140,6 +141,27 @@ public class ControllerMain {
     }
 
     @FXML private void initialize() {
+        languageList.getItems().clear();
+        languageList.getItems().addAll("Русский", "Slovenski");
+        System.out.println(currentLocale);
+        if (currentLocale.getLanguage().equals("sl")) {
+            languageList.setValue("Slovenski");
+        } else {
+            languageList.setValue("Русский");
+        }
+
+        languageList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !newVal.equals(oldVal)) {
+                Locale locale;
+                if ("Slovenski".equals(newVal)) {
+                    locale = new Locale("sl");
+                } else {
+                    locale = new Locale("ru");
+                }
+                reloadWindow(locale);
+            }
+        });
+        loginLabel.setText(login);
         setupTableColumns();
         setSorting();
 
@@ -380,7 +402,9 @@ public class ControllerMain {
 
     public void setLogin(String login) {
         this.login = login;
-        loginLabel.setText(login);
+        if (loginLabel != null) {
+            loginLabel.setText(login); // безопасно, если элемент уже загружен
+        }
     }
 
     public void setPassword(String password) {
@@ -501,4 +525,50 @@ public class ControllerMain {
             System.out.println("обновил");
     }
         }
+
+    public void setCurrentLocale(Locale currentLocale) {
+        this.currentLocale = currentLocale;
+
+    }
+
+    private void reloadWindow(Locale locale) {
+        System.out.println("обновляю" + locale);
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
+        fxmlLoader.setResources(ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", locale));
+
+        // Контроллер с нужной локалью и передачей communication
+        fxmlLoader.setControllerFactory(controllerClass -> {
+            try {
+                ControllerMain controllerMain = (ControllerMain) controllerClass.getDeclaredConstructor().newInstance();
+                controllerMain.setLogin(login);
+                controllerMain.setPassword(password);
+                controllerMain.setCommunication(communication);
+                controllerMain.setCurrentLocale(currentLocale);
+                controllerMain.startUpdates();
+
+                controllerMain.setCurrentLocale(locale);  // Устанавливаем локаль до initialize()
+                return controllerMain;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        Parent root;
+        try {
+            root = fxmlLoader.load();  // initialize() вызовется с нужной локалью
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) languageList.getScene().getWindow();
+        stage.setTitle("Main Window");
+        stage.setScene(scene);
+        loginLabel.setText(login);
+        stage.show();
+    }
+
+    public ChoiceBox<String> getLanguageList() {
+        return languageList;
+    }
 }

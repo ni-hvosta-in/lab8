@@ -101,12 +101,18 @@ public class ControllerLogin {
 
     public void openMainWindow() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
+        fxmlLoader.setResources(ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale));
         Parent root = fxmlLoader.load();
         ControllerMain controllerMain = fxmlLoader.getController();
 
         controllerMain.setLogin(login);
         controllerMain.setPassword(password);
         controllerMain.setCommunication(communication);
+        if (currentLocale.getLanguage().equals("sl")) {
+            controllerMain.getLanguageList().setValue("Slovenski");
+        } else {
+            controllerMain.getLanguageList().setValue("Русский");
+        }
         controllerMain.startUpdates();
 
         LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
