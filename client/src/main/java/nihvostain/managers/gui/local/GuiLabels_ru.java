@@ -31,7 +31,25 @@ public class GuiLabels_ru extends ListResourceBundle {
                 {"filter_greater_than_group_admin", "фильтр_больший_чем_староста"},
                 {"edit", "редактировать"},
                 {"delete", "удалить"},
-                {"visualize", "визуализация"}
+                {"visualize", "визуализация"},
+                {"OK", "ок"},
+                {"key", "ключ"},
+                {"id", "ид"},
+                {"name", "имя"},
+                {"x", "x"},
+                {"y", "y"},
+                {"studentsCount", "количество студентов"},
+                {"creationDate", "дата создания"},
+                {"formOfEducation", "форма обучения"},
+                {"semesterEnum", "семестр"},
+                {"nameP", "имя старосты"},
+                {"birthday", "день рождения"},
+                {"passportID", "паспорт"},
+                {"eyeColor", "цвет глаз"},
+                {"hairColor", "цвет волос"},
+                {"scriptName", "имя скрипта"},
+                {"nameSubstring", "подстрока имени"},
+                {"",""}
         };
 
     }

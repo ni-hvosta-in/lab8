@@ -77,9 +77,10 @@ public class ControllerMain {
         if (command.getNeededArgsLen() == 1){
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/onefieldset.fxml"));
+            fxmlLoader.setResources(ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale));
             Parent root = fxmlLoader.load();
             ControllerOneField controllerOneField = fxmlLoader.getController();
-            controllerOneField.setFieldLabel(command.getParamsName()[0]);
+            controllerOneField.setFieldLabel(fxmlLoader.getResources().getString(command.getParamsName()[0]));
             controllerOneField.setCommand(command);
             controllerOneField.setResultLabel(resultLabel);
             showScene(root);
@@ -87,6 +88,7 @@ public class ControllerMain {
 
         } else if (command.getNeededArgsLen() > 1){
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
+            fxmlLoader.setResources(ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale));
             Parent root = fxmlLoader.load();
             Controller12Field controller = getPreparedController(fxmlLoader.getController());
             for (int i = 0; i < 12-command.getNeededArgsLen(); i++) {
@@ -143,7 +145,7 @@ public class ControllerMain {
     @FXML private void initialize() {
         languageList.getItems().clear();
         languageList.getItems().addAll("Русский", "Slovenski");
-        System.out.println(currentLocale);
+
         if (currentLocale.getLanguage().equals("sl")) {
             languageList.setValue("Slovenski");
         } else {
@@ -416,8 +418,9 @@ public class ControllerMain {
     }
 
     private Controller12Field getPreparedController (Controller12Field controller) {
-
-        controller.setNameFieldLabel(command.getParamsName()[0]);
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale);
+        System.out.println(command + command.getParamsName()[0]);
+        controller.setNameFieldLabel(resourceBundle.getString(command.getParamsName()[0]));
         controller.setFormOfEducation();
         controller.setSemesterEnum();
         controller.setEyeColorEnum();
@@ -561,11 +564,13 @@ public class ControllerMain {
         }
 
         Scene scene = new Scene(root);
-        Stage stage = (Stage) languageList.getScene().getWindow();
-        stage.setTitle("Main Window");
-        stage.setScene(scene);
-        loginLabel.setText(login);
-        stage.show();
+        if (languageList.getScene() != null) {
+            Stage stage = (Stage) languageList.getScene().getWindow();
+            stage.setTitle("Main Window");
+            stage.setScene(scene);
+            loginLabel.setText(login);
+            stage.show();
+        }
     }
 
     public ChoiceBox<String> getLanguageList() {

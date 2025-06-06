@@ -32,7 +32,7 @@
       </HBox>
       <HBox VBox.vgrow="ALWAYS">
          <children>
-            <Label fx:id="nameFieldLabel1" text="name">
+            <Label fx:id="nameFieldLabel1" text="%name">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -52,7 +52,7 @@
       </HBox>
       <HBox VBox.vgrow="ALWAYS">
          <children>
-            <Label fx:id="nameFieldLabel2" text="x">
+            <Label fx:id="nameFieldLabel2" text="%x">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -92,7 +92,7 @@
       </HBox>
       <HBox VBox.vgrow="ALWAYS">
          <children>
-            <Label fx:id="nameFieldLabel5" text="studentsCount">
+            <Label fx:id="nameFieldLabel5" text="%studentsCount">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -112,7 +112,7 @@
       </HBox>
       <HBox VBox.vgrow="ALWAYS">
          <children>
-            <Label fx:id="nameFieldLabel85" text="formEdu">
+            <Label fx:id="nameFieldLabel85" text="%formOfEducation">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -125,7 +125,7 @@
       </HBox>
       <HBox VBox.vgrow="ALWAYS">
          <children>
-            <Label fx:id="nameFieldLabel86" text="semEnum">
+            <Label fx:id="nameFieldLabel86" text="%semesterEnum">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -138,7 +138,7 @@
       </HBox>
       <HBox VBox.vgrow="ALWAYS">
          <children>
-            <Label fx:id="nameFieldLabel87" text="nameP">
+            <Label fx:id="nameFieldLabel87" text="%nameP">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -158,7 +158,7 @@
       </HBox>
       <HBox>
          <children>
-            <Label fx:id="nameFieldLabel871" text="birthday">
+            <Label fx:id="nameFieldLabel871" text="%birthday">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -178,7 +178,7 @@
       </HBox>
       <HBox>
          <children>
-            <Label fx:id="nameFieldLabel872" text="passportID">
+            <Label fx:id="nameFieldLabel872" text="%passportID">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -198,7 +198,7 @@
       </HBox>
       <HBox>
          <children>
-            <Label fx:id="label11" text="eyeColor">
+            <Label fx:id="label11" text="%eyeColor">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -211,7 +211,7 @@
       </HBox>
       <HBox>
          <children>
-            <Label fx:id="label12" text="hairColor">
+            <Label fx:id="label12" text="%hairColor">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -222,7 +222,7 @@
             <ChoiceBox fx:id="hairColorEnum" />
          </children>
       </HBox>
-      <Button fx:id="setFieldButton" mnemonicParsing="false" onAction="#setField" text="Button">
+      <Button fx:id="setFieldButton" mnemonicParsing="false" onAction="#setField" text="%OK">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>

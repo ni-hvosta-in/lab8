@@ -108,6 +108,7 @@ public class ControllerLogin {
         controllerMain.setLogin(login);
         controllerMain.setPassword(password);
         controllerMain.setCommunication(communication);
+        controllerMain.setCurrentLocale(currentLocale);
         if (currentLocale.getLanguage().equals("sl")) {
             controllerMain.getLanguageList().setValue("Slovenski");
         } else {
