@@ -78,30 +78,48 @@ public class ControllerLogin {
 
     @FXML public void initialize() {
         languageList.getItems().clear();
-        languageList.getItems().addAll("Русский", "Slovenski");
+        languageList.getItems().addAll("Русский", "Slovenski", "Ελληνικά", "Español (PA)");
 
-        if (currentLocale.getLanguage().equals("sl")) {
-            languageList.setValue("Slovenski");
-        } else {
-            languageList.setValue("Русский");
+        switch (currentLocale.getLanguage()) {
+            case "sl":
+                languageList.setValue("Slovenski");
+                break;
+            case "el":
+                languageList.setValue("Ελληνικά");
+                break;
+            case "es":
+                languageList.setValue("Español (PA)");
+                break;
+            default:
+                languageList.setValue("Русский");
         }
 
         languageList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null && !newVal.equals(oldVal)) {
-                Locale locale;
-                if ("Slovenski".equals(newVal)) {
-                    locale = new Locale("sl");
-                } else {
-                    locale = new Locale("ru");
+                Locale newLocale;
+                switch (newVal) {
+                    case "Slovenski":
+                        newLocale = new Locale("sl");
+                        break;
+                    case "Ελληνικά":
+                        newLocale = new Locale("el");
+                        break;
+                    case "Español (PA)":
+                        newLocale = new Locale("es", "PA");
+                        break;
+                    default:
+                        newLocale = new Locale("ru");
                 }
-                reloadWindow(locale);
+                reloadWindow(newLocale);
             }
         });
     }
 
+
     public void openMainWindow() throws IOException {
+        ResourceBundle bundle = ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale);
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
-        fxmlLoader.setResources(ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale));
+        fxmlLoader.setResources(bundle);
         Parent root = fxmlLoader.load();
         ControllerMain controllerMain = fxmlLoader.getController();
 
@@ -109,11 +127,23 @@ public class ControllerLogin {
         controllerMain.setPassword(password);
         controllerMain.setCommunication(communication);
         controllerMain.setCurrentLocale(currentLocale);
-        if (currentLocale.getLanguage().equals("sl")) {
-            controllerMain.getLanguageList().setValue("Slovenski");
-        } else {
-            controllerMain.getLanguageList().setValue("Русский");
+
+        String languageDisplayName;
+        switch (currentLocale.getLanguage()) {
+            case "sl":
+                languageDisplayName = "Slovenski";
+                break;
+            case "el":
+                languageDisplayName = "Ελληνικά";
+                break;
+            case "es":
+                languageDisplayName = "Español (PA)";
+                break;
+            default:
+                languageDisplayName = "Русский";
         }
+        controllerMain.getLanguageList().setValue(languageDisplayName);
+
         controllerMain.startUpdates();
 
         LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
@@ -124,7 +154,8 @@ public class ControllerLogin {
         commands.put("update", new UpdateCommand(communication, login, password));
         commands.put("remove_key", new RemoveKeyCommand(communication, login, password));
         commands.put("clear", new ClearCommand(communication));
-        commands.put("execute_script", new ExecuteScriptCommand(communication, login, password, controllerMain.getResultLabel()));
+        commands.put("execute_script", new ExecuteScriptCommand(
+                communication, login, password, controllerMain.getResultLabel(), bundle));
         commands.put("exit", new ExitCommand(communication));
         commands.put("remove_lower", new RemoveLowerCommand(communication));
         commands.put("replace_if_greater", new ReplaceIfGreaterCommand(communication, login, password));

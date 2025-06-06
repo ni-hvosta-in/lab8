@@ -29,7 +29,7 @@ public class ExitCommand implements Command {
     @Override
     public RequestObj execute(Request request) throws IOException {
         new SaveCommand(collectionManager).execute(request);
-        return new RequestObj("Сохраняю коллекцию в файл");
+        return new RequestObj("I save the collection to a file");
     }
 
     /**

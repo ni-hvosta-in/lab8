@@ -42,9 +42,9 @@ public class RemoveKeyCommand implements Command {
             dataBasesManager.removeKey(request.getParams().get(0));
             response = collectionManager.getStudyGroupList().get(request.getParams().get(0)).toString();
             collectionManager.removeKey(request.getParams().get(0));
-            req = new RequestObj("удалил по ключу " + request.getParams().get(0) + "\n" + response );
+            req = new RequestObj("deleted by key " + request.getParams().get(0) + "\n" + response );
         } else {
-            response = "Это объект другого пользователя";
+            response = "This is another user's object";
             req = new RequestObj(response );
         }
 

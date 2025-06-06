@@ -6,13 +6,13 @@ import java.io.Serializable;
  * Перечисление ошибок в параметре
  */
 public enum InvalidParamMessage implements Serializable {
-    TRUE("все гуд"),
-    ExistingKey("такой ключ уже есть"),
-    NoKey("нет такого ключа"),
-    NoID("нет такого id"),
-    NotLongID("id должен быть Long"),
-    FALSE("все очень плохо"),
-    FILENOTFOUND("нет файла с таким именем");
+    TRUE("goodParam"),
+    ExistingKey("existingKey"),
+    NoKey("noKey"),
+    NoID("noID"),
+    NotLongID("notLongID"),
+    FALSE("false"),
+    FILENOTFOUND("fileNotFound");
 
     private final String message;
 

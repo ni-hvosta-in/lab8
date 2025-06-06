@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 import java.util.Scanner;
 import java.util.concurrent.TimeoutException;
 
@@ -22,12 +23,13 @@ public class ExecuteScriptCommand implements Command {
     private final String login;
     private final String password;
     private final TextArea resultLabel;
-    public ExecuteScriptCommand(Communication communication, String login, String password, TextArea resultLabel) {
+    private final ResourceBundle resourceBundle;
+    public ExecuteScriptCommand(Communication communication, String login, String password, TextArea resultLabel, ResourceBundle resourceBundle) {
         this.communication = communication;
         this.login = login;
         this.password = password;
-
         this.resultLabel = resultLabel;
+        this.resourceBundle = resourceBundle;
     }
 
     @Override
@@ -35,7 +37,7 @@ public class ExecuteScriptCommand implements Command {
         Scanner sc = null;
         try {
             sc = new Scanner(new File(args.get(0)));
-            Invoker invoker = new Invoker(sc, communication, login, password, resultLabel);
+            Invoker invoker = new Invoker(sc, communication, login, password, resultLabel, resourceBundle);
             invoker.setFileFlag(true);
             try {
                 invoker.scanning();

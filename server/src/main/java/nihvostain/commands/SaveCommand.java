@@ -35,7 +35,7 @@ public class SaveCommand implements Command {
             System.out.println("Коллекция записана в файл studygroupNotFromVAR");
             fileWriter.toXML("studygroupNotFromVAR");
         }
-        return new RequestObj("записал");
+        return new RequestObj("saved");
     }
 
     /**

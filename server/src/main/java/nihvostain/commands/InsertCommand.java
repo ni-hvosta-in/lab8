@@ -43,7 +43,7 @@ public class InsertCommand implements Command {
                 Person.addPassportID(request.getStudyGroup().getGroupAdmin().getPassportID());
             }
             System.out.println("Добавил " + collectionManager.getStudyGroupList().get(key));
-            req = new RequestObj("Добавил " + collectionManager.getStudyGroupList().get(key));
+            req = new RequestObj("Added " + collectionManager.getStudyGroupList().get(key));
 
         } catch (ExistingKeyException e) {
             System.out.println(e.getMessage());

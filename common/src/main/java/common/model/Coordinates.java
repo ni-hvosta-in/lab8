@@ -59,7 +59,7 @@ public class Coordinates implements ValidateClass, Serializable {
      */
     @Override
     public String toString() {
-        return "Координаты:" + "\n" + "x: " + x + "\n" + "y: " + y + "\n";
+        return "Coordinates:" + "\n" + "x: " + x + "\n" + "y: " + y + "\n";
     }
 
     /**

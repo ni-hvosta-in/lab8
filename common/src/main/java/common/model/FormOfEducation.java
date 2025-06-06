@@ -7,9 +7,9 @@ import java.util.Map;
  * Перечисление всех форм обучения
  */
 public enum FormOfEducation {
-    DISTANCE_EDUCATION("дистанционное обучение"),
-    FULL_TIME_EDUCATION("обычное обучение"),
-    EVENING_CLASSES("вечерние занятия");
+    DISTANCE_EDUCATION("distance education"),
+    FULL_TIME_EDUCATION("full time education"),
+    EVENING_CLASSES("evening classes");
 
     private final String form;
 

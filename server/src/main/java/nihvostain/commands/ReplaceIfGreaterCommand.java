@@ -37,12 +37,12 @@ public class ReplaceIfGreaterCommand implements Command {
             if (studyGroup.compareTo(collectionManager.getStudyGroupList().get(key)) > 0 & dataBasesManager.allowModification(key, request.getLogin())){
                 dataBasesManager.updateStudyGroupKey(key, studyGroup);
                 collectionManager.updateStudyGroup(key, studyGroup);
-                return new RequestObj("заменил");
+                return new RequestObj("replaced");
             } else {
-                return new RequestObj("не заменил");
+                return new RequestObj("did not replace");
             }
         } else {
-            return new RequestObj("Такого ключа не существует");
+            return new RequestObj("There is no such key");
         }
     }
 

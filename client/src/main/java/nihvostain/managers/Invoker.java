@@ -49,15 +49,17 @@ public class Invoker {
     /**
          * @param sc сканер
      */
+    private final ResourceBundle resourceBundle;
     private static LinkedHashMap<String, Command> commands;
 
-    public Invoker(Scanner sc, Communication communication, String login, String password, TextArea resulLabel) {
+    public Invoker(Scanner sc, Communication communication, String login, String password, TextArea resulLabel, ResourceBundle resourceBundle) {
 
         this.sc = sc;
         this.communication = communication;
         this.login = login;
         this.password = password;
         this.resulLabel = resulLabel;
+        this.resourceBundle = resourceBundle;
     }
 
     public static void setCommands(LinkedHashMap<String, Command> commands) {
@@ -69,7 +71,7 @@ public class Invoker {
      * @throws InputFromScriptException ошибка в скрипте
      * @throws RecursionDepthExceededException ошибка глубины рекурсии
      */
-    public void scanning() throws InputFromScriptException, RecursionDepthExceededException, IOException {
+    public void scanning() throws InputFromScriptException, RecursionDepthExceededException, IOException, ClassCastException {
 
         while (sc.hasNext()){
 
@@ -108,39 +110,39 @@ public class Invoker {
                                 }
                             }
                         } else if (fileFlag) {
-                            resulLabel.setText("Неверные параметры для вызванной команды в скрипте");
+                            resulLabel.setText(resourceBundle.getString("wrongParamInScript"));
                             throw new InputFromScriptException();
                         } else {
                             try {
                                 resulLabel.setText(command.isValidParam(tokens).getMessage());
                             } catch (ClassNotFoundException e) {
-                                resulLabel.setText("ошибка передачи данных с сервера");
+                                resulLabel.setText("data.error");
                             }
                         }
                     } catch (ClassNotFoundException | StreamCorruptedException e) {
-                        resulLabel.setText("ошибка передачи данных с сервера");
+                        resulLabel.setText("data.error");
                     } catch (TimeoutException e) {
-                        resulLabel.setText("сервер временно не доступен");
+                        resulLabel.setText("server.timeOut");
                     }
                 } else {
                     if (fileFlag){
-                        resulLabel.setText("Неверные параметры для вызванной команды в скрипте");
+                        resulLabel.setText(resourceBundle.getString("wrongParamInScript"));
                         throw new InputFromScriptException();
                     }
-                    resulLabel.setText("Неверные параметры для вызванной команды");
+                    resulLabel.setText(resourceBundle.getString("wrongParam"));
                 }
             } else {
                 if (fileFlag) {
-                    resulLabel.setText("Неопознанная команда в скрипте");
+                    resulLabel.setText(resourceBundle.getString("wrongCommand"));
                     throw new InputFromScriptException();
                 }
-                resulLabel.setText("такой команды нет, используйте команду help");
+                resulLabel.setText(resourceBundle.getString("wrongCommand"));
             }
             Console.write("~ ", (fileFlag & Invoker.depth != 1));
 
         }
         if (!fileFlag){
-            Invoker invoker = new Invoker(new Scanner(System.in), communication, login, password, resulLabel);
+            Invoker invoker = new Invoker(new Scanner(System.in), communication, login, password, resulLabel, resourceBundle);
             invoker.setDepth(1);
             System.out.println("чтобы выйти из консоли введите exit");
             System.out.print("~ ");

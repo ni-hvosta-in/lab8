@@ -7,10 +7,10 @@ import java.util.Map;
  * Перечисление всех цветов глаз
  */
 public enum EyeColor {
-    GREEN("зеленый"),
-    BLACK("черный"),
-    YELLOW("желтый"),
-    BROWN("коричневый");
+    GREEN("green"),
+    BLACK("black"),
+    YELLOW("yellow"),
+    BROWN("brown");
 
     private final String col;
 

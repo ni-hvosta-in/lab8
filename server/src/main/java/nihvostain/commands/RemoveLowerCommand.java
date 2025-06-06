@@ -68,7 +68,7 @@ public class RemoveLowerCommand implements Command {
         }
         else {
             System.out.println("Коллекция пуста");
-            return new RequestObj("Коллекция пуста");
+            return new RequestObj("Collection is empty");
         }
     }
 

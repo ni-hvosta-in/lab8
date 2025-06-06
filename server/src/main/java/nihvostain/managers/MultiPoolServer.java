@@ -71,7 +71,7 @@ public class MultiPoolServer {
                 executePool.execute(new ExecuteTaskManager(request, commands));
             } catch (ClassNotFoundException | IOException e) {
                 System.out.println("ошибка десериализации");
-                responsePool.execute(new ResponseTaskManager(new RequestObj("ошибка десериализации")));
+                responsePool.execute(new ResponseTaskManager(new RequestObj("data.error")));
             }
         }
     }
@@ -144,7 +144,7 @@ public class MultiPoolServer {
                 }
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
-                responsePool.execute(new ResponseTaskManager(new RequestObj("Ошибка работы с бд")));
+                responsePool.execute(new ResponseTaskManager(new RequestObj("database.error")));
             } catch (IOException e) {
                 System.out.println("ошибка передачи данных с клиента");
             }

@@ -32,7 +32,9 @@ import nihvostain.utility.Command;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
@@ -68,16 +70,16 @@ public class ControllerMain {
     private List<StudyGroupWithKey> sGOld = new ArrayList<>();
     private TableColumn<StudyGroupWithKey, ?> sortColumn = keyColumn;
     private TableColumn.SortType sortType = TableColumn.SortType.ASCENDING;
-    @FXML public void execute(ActionEvent actionEvent) throws RecursionDepthExceededException, IOException {
+    @FXML public void execute(ActionEvent actionEvent) throws IOException {
 
         Button clicked = (Button) actionEvent.getSource();
         command = Invoker.getCommands().get(clicked.getId());
         String comm = clicked.getId();
-
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale);
         if (command.getNeededArgsLen() == 1){
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/onefieldset.fxml"));
-            fxmlLoader.setResources(ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale));
+            fxmlLoader.setResources(resourceBundle);
             Parent root = fxmlLoader.load();
             ControllerOneField controllerOneField = fxmlLoader.getController();
             controllerOneField.setFieldLabel(fxmlLoader.getResources().getString(command.getParamsName()[0]));
@@ -88,7 +90,7 @@ public class ControllerMain {
 
         } else if (command.getNeededArgsLen() > 1){
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
-            fxmlLoader.setResources(ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale));
+            fxmlLoader.setResources(resourceBundle);
             Parent root = fxmlLoader.load();
             Controller12Field controller = getPreparedController(fxmlLoader.getController());
             for (int i = 0; i < 12-command.getNeededArgsLen(); i++) {
@@ -104,19 +106,21 @@ public class ControllerMain {
         Scanner scanner = new Scanner(comm);
         resultLabel.setEditable(false);
         System.out.println(comm);
-        Invoker invoker = new Invoker(scanner, communication, login, password, resultLabel);
+        Invoker invoker = new Invoker(scanner, communication, login, password, resultLabel, resourceBundle);
         invoker.setFileFlag(true);
         try {
-            invoker.scanning();
+            try {
+                invoker.scanning();
+            } catch (RecursionDepthExceededException e) {
+                resultLabel.setText(resourceBundle.getString(e.getMessage()));
+            }
             updateData();
-        } catch (InputFromScriptException | NoSuchElementException ignored) {
+        } catch (InputFromScriptException | RuntimeException ignored) {
 
-        }catch (IOException e) {
-            resultLabel.setText("Ошибка сериализации");
-        } catch (ClassNotFoundException e) {
-            resultLabel.setText("Ошибка десериализации");
+        } catch (IOException | ClassNotFoundException e) {
+            resultLabel.setText(resourceBundle.getString("data.error"));
         } catch (TimeoutException e) {
-            resultLabel.setText("Сервер временно не доступен");
+            resultLabel.setText(resourceBundle.getString("server.timeOut"));
         }
     }
     @FXML public void edit() throws IOException {
@@ -144,21 +148,37 @@ public class ControllerMain {
 
     @FXML private void initialize() {
         languageList.getItems().clear();
-        languageList.getItems().addAll("Русский", "Slovenski");
+        languageList.getItems().addAll("Русский", "Slovenski", "Ελληνικά", "Español (PA)");
 
-        if (currentLocale.getLanguage().equals("sl")) {
-            languageList.setValue("Slovenski");
-        } else {
-            languageList.setValue("Русский");
+        switch (currentLocale.getLanguage()) {
+            case "sl":
+                languageList.setValue("Slovenski");
+                break;
+            case "el":
+                languageList.setValue("Ελληνικά");
+                break;
+            case "es":
+                languageList.setValue("Español (PA)");
+                break;
+            default:
+                languageList.setValue("Русский");
         }
 
         languageList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null && !newVal.equals(oldVal)) {
                 Locale locale;
-                if ("Slovenski".equals(newVal)) {
-                    locale = new Locale("sl");
-                } else {
-                    locale = new Locale("ru");
+                switch (newVal) {
+                    case "Slovenski":
+                        locale = new Locale("sl");
+                        break;
+                    case "Ελληνικά":
+                        locale = new Locale("el");
+                        break;
+                    case "Español (PA)":
+                        locale = new Locale("es", "PA");
+                        break;
+                    default:
+                        locale = new Locale("ru");
                 }
                 reloadWindow(locale);
             }
@@ -222,7 +242,8 @@ public class ControllerMain {
 
         creationDateColumn.setCellValueFactory(cellData -> {
             LocalDateTime date = cellData.getValue().getStudyGroup().getCreationDate();
-            String formatted = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(currentLocale);
+            String formatted = date.format(formatter);
             return new SimpleStringProperty(formatted);
         });
 
@@ -241,8 +262,13 @@ public class ControllerMain {
 
         birthdayColumn.setCellValueFactory(cell -> {
             Person admin = cell.getValue().getStudyGroup().getGroupAdmin();
-            return new SimpleStringProperty(admin != null && admin.getBirthday() != null ?
-                    admin.getBirthday().toString() : "");
+            ZonedDateTime birthday = admin != null ? admin.getBirthday() : null;
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL)
+                    .withLocale(currentLocale);
+
+            String formatted = birthday != null ? birthday.format(formatter) : "";
+            return new SimpleStringProperty(formatted);
         });
 
         passportIdColumn.setCellValueFactory(cell -> {
@@ -379,18 +405,17 @@ public class ControllerMain {
 
     public void startUpdates() {
         Thread updateThread = new Thread(() -> {
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale);
             while (true) {
                 try {
                     updateData();
                     Thread.sleep(10000);
-                }catch (IOException e) {
-                    resultLabel.setText("Ошибка сериализации");
-                } catch (ClassNotFoundException e) {
-                    resultLabel.setText("Ошибка десериализации");
+                }catch (IOException | ClassNotFoundException e) {
+                    resultLabel.setText(resourceBundle.getString("data.error"));
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 } catch (TimeoutException e) {
-                    resultLabel.setText("Сервер временно не доступен");
+                    resultLabel.setText(resourceBundle.getString("server.timeOut"));
                 }
             }
         });
@@ -430,7 +455,7 @@ public class ControllerMain {
         controller.setCommunication(communication);
         controller.setCommand(command);
         controller.setResultLabel(resultLabel);
-
+        controller.setResourceBundle(resourceBundle);
         return controller;
     }
     private void showScene(Parent root){
@@ -458,20 +483,22 @@ public class ControllerMain {
         return ans == sG1.size();
     }
     private void updateStudyGroup(StudyGroupWithKey studyGroupWithKey) throws IOException {
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale);
         if (studyGroupWithKey.getLogin().equals(login)) {
             String comm = "update";
             command = Invoker.getCommands().get(comm);
             comm += " " + studyGroupWithKey.getId();
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/12Fields.fxml"));
-            fxmlLoader.setResources(ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale));
+            fxmlLoader.setResources(resourceBundle);
             Parent root = fxmlLoader.load();
             Controller12Field controller = getPreparedController(fxmlLoader.getController());
             controller.removeFirstHBox();
             controller.setInputFromTableFlag(true);
+            controller.setResourceBundle(resourceBundle);
             showScene(root);
             comm = comm + " " + controller.getFieldValue();
             Scanner scanner = new Scanner(comm);
-            Invoker invoker = new Invoker(scanner, communication, login, password, resultLabel);
+            Invoker invoker = new Invoker(scanner, communication, login, password, resultLabel, resourceBundle);
             invoker.setFileFlag(true);
             try {
                 invoker.scanning();
@@ -480,23 +507,27 @@ public class ControllerMain {
                      TimeoutException ignored) {
             }
         } else {
-            resultLabel.setText("объект чужого пользователя");
+            resultLabel.setText(resourceBundle.getString("alien"));
         }
     }
     private void deleteStudyGroup(StudyGroupWithKey studyGroupWithKey){
-
-        String key = studyGroupWithKey.getKey();
-        ArrayList<String> args = new ArrayList<>();
-        args.add(key);
-        Command delete = new RemoveKeyCommand(communication, login, password);
-        try {
-            communication.send(delete.request(args).addUser(login, password).serialize());
-            delete.request(args);
-            byte[] message = communication.receive();
-            resultLabel.setText(new Deserialize<RequestObj>(message).deserialize().getRequest().toString());
-            updateData();
-        } catch (IOException | ClassNotFoundException | TimeoutException e) {
-            resultLabel.setText(e.getMessage());
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale);
+        if (studyGroupWithKey.getLogin().equals(login)) {
+            String key = studyGroupWithKey.getKey();
+            ArrayList<String> args = new ArrayList<>();
+            args.add(key);
+            Command delete = new RemoveKeyCommand(communication, login, password);
+            try {
+                communication.send(delete.request(args).addUser(login, password).serialize());
+                delete.request(args);
+                byte[] message = communication.receive();
+                resultLabel.setText(new Deserialize<RequestObj>(message).deserialize().getRequest().toString());
+                updateData();
+            } catch (IOException | ClassNotFoundException | TimeoutException e) {
+                resultLabel.setText(e.getMessage());
+            }
+        } else {
+            resultLabel.setText(resourceBundle.getString("alien"));
         }
     }
     private void updateData() throws IOException, TimeoutException, ClassNotFoundException {
@@ -539,22 +570,20 @@ public class ControllerMain {
         System.out.println("обновляю" + locale);
         currentLocale = locale;
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
-        fxmlLoader.setResources(ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", locale));
-        if (graphView.getStage().isShowing()) {
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", locale);
+        fxmlLoader.setResources(resourceBundle);
+
+        if (graphView != null && graphView.getStage() != null && graphView.getStage().isShowing()) {
             graphView.getStage().close();
         }
-        // Контроллер с нужной локалью и передачей communication
         fxmlLoader.setControllerFactory(controllerClass -> {
             try {
                 ControllerMain controllerMain = (ControllerMain) controllerClass.getDeclaredConstructor().newInstance();
-                controllerMain.setCurrentLocale(currentLocale);
-
+                controllerMain.setCurrentLocale(locale);
                 controllerMain.setLogin(login);
                 controllerMain.setPassword(password);
                 controllerMain.setCommunication(communication);
                 controllerMain.startUpdates();
-
-                controllerMain.setCurrentLocale(locale);  // Устанавливаем локаль до initialize()
                 return controllerMain;
             } catch (Exception e) {
                 throw new RuntimeException(e);

@@ -47,7 +47,9 @@ public class Controller12Field {
     private int removeRow;
     private boolean inputPerson;
     private boolean inputFromTableFlag = false;
+    private ResourceBundle resourceBundle;
     @FXML public void setField(ActionEvent event) throws IOException, ClassNotFoundException, TimeoutException {
+
         fieldValue = "";
         if (!inputPerson) {
             fieldValue = field1.getText().trim() + "\n"
@@ -106,7 +108,7 @@ public class Controller12Field {
                 try {
                     if (!entry.getValue().isValidate(((TextField) entry.getKey()).getText().trim())) {
                         entry.getKey().setStyle("-fx-text-box-border: #ff0000; -fx-focus-color: #ff0000;");
-                        wrongFields += entry.getValue().getTypeWrongField().getMessage() + "\n";
+                        wrongFields += resourceBundle.getString(entry.getValue().getTypeWrongField().getMessage()) + "\n";
                     } else {
                         entry.getKey().setStyle("-fx-text-box-border: #00ff00; -fx-focus-color: #00ff00;");
                     }
@@ -118,7 +120,7 @@ public class Controller12Field {
                 if (((ChoiceBox<?>) entry.getKey()).getValue() == null) {
                     if (!entry.getValue().isValidate("")) {
                         entry.getKey().setStyle("-fx-text-box-border: #ff0000; -fx-focus-color: #ff0000;");
-                        wrongFields += entry.getValue().getTypeWrongField().getMessage() + "\n";
+                        wrongFields += resourceBundle.getString(entry.getValue().getTypeWrongField().getMessage()) + "\n";
                     }
                 } else{
                     entry.getKey().setStyle("-fx-text-box-border: #00ff00; -fx-focus-color: #00ff00;");
@@ -133,7 +135,13 @@ public class Controller12Field {
             if (inputFromTableFlag) {
                 resultLabel.setText(wrongFields);
             } else {
-                resultLabel.setText(wrongFields + paramMessage.getMessage());
+                if (paramMessage != InvalidParamMessage.TRUE) {
+                    resultLabel.setText(wrongFields + resourceBundle.getString(paramMessage.getMessage()));
+                } else {
+                    resultLabel.setText(wrongFields);
+                    field1.setStyle("-fx-text-box-border: #00ff00; -fx-focus-color: #00ff00;");
+
+                }
             }
             if (paramMessage != InvalidParamMessage.TRUE) {
                 field1.setStyle("-fx-text-box-border: #ff0000; -fx-focus-color: #ff0000;");
@@ -198,5 +206,8 @@ public class Controller12Field {
 
     public void setInputFromTableFlag(boolean inputFromTableFlag) {
         this.inputFromTableFlag = inputFromTableFlag;
+    }
+    public void setResourceBundle(ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
     }
 }

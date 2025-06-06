@@ -232,22 +232,22 @@ public class StudyGroup implements Comparable <StudyGroup>, ValidateClass, Seria
     @Override
     public String toString() {
         String info = "";
-        info += "id группы: " + id + "\n";
-        info += "имя: " + name + "\n";
+        info += "id: " + id + "\n";
+        info += "name: " + name + "\n";
         info += coordinates;
-        info += "Дата создания: " + creationDate.toString().substring(8,10) + "-" +
+        info += "Creation Date: " + creationDate.toString().substring(8,10) + "-" +
                 creationDate.toString().substring(5,7) + "-" + creationDate.toString().substring(0,4) + creationDate.toString().substring(10,creationDate.toString().length()) + "\n";
-        info += "Кол-во студентов: " + studentsCount + "\n";
-        info += "Форма обучения: " + formOfEducation.getForm() + "\n";
-        info += "Семестр: " + semesterEnum.getSem() + "\n";
+        info += "Number of students: " + studentsCount + "\n";
+        info += "Form of education: " + formOfEducation.getForm() + "\n";
+        info += "Semester: " + semesterEnum.getSem() + "\n";
         if (groupAdmin == null){
-            info += "Нет старосты";
+            info += "No admin";
         } else {
-            info += "Староста группы: " + groupAdmin.getName() + "\n";
-            info += "День рождения старосты: " + groupAdmin.getBirthday() + "\n";
-            info += "Паспорт старосты: " + groupAdmin.getPassportID() + "\n";
-            info += "Цвет глаз старосты: " + groupAdmin.getEyeColor() + "\n";
-            info += "Цвет волос старост: " + groupAdmin.getHairColor();
+            info += "Group admin: " + groupAdmin.getName() + "\n";
+            info += "Group admin birthday: " + groupAdmin.getBirthday() + "\n";
+            info += "Group admin passport: " + groupAdmin.getPassportID() + "\n";
+            info += "Group admin eyeColor: " + groupAdmin.getEyeColor() + "\n";
+            info += "Group admin hairColor: " + groupAdmin.getHairColor();
         }
         return info;
     }

@@ -1,18 +1,17 @@
 package common.utility;
 
 public enum TypeWrongField {
-    WRONG_NAME("имя не может быть пустым"),
-    WRONG_X("X должен быть типа Integer"),
-    WRONG_Y("Y должен быть типа Double"),
-    WRONG_STUDENTS_COUNT("кол-во студентов должно быть типа Long и больше нуля"),
-    WRONG_FORM_OF_EDU("Такой формы обучения нет в списке"),
-    WRONG_SEMESTER_ENUM("Такого семестра нет в списке"),
-    WRONG_NAME_P("имя не может быть пустым"),
-    WRONG_BIRTHDAY("день рождения должен быть в формате 'dd-MM-yyyy'T'HH:mm:ssXXX'\\n\" +\n" +
-            "                        \"Пример: 25-07-2006T14:30:00+03:00"),
-    WRONG_PASSPORT_ID("Такого паспорта не существует или он не ваш"),
-    WRONG_EYE("Такого цвета в списке нет"),
-    WRONG_HAIR("Такого цвета в списке нет");
+    WRONG_NAME("wrong_name"),
+    WRONG_X("wrong_X"),
+    WRONG_Y("wrong_Y"),
+    WRONG_STUDENTS_COUNT("wrong_student_count"),
+    WRONG_FORM_OF_EDU("wrong_form_of_edu"),
+    WRONG_SEMESTER_ENUM("wrong_semester_enum"),
+    WRONG_NAME_P("wrong_name_P"),
+    WRONG_BIRTHDAY("wrong_birthday"),
+    WRONG_PASSPORT_ID("wrong_passport_id"),
+    WRONG_EYE("wrong_eye"),
+    WRONG_HAIR("wrong_hair");
     private final String message;
 
     TypeWrongField(String message){

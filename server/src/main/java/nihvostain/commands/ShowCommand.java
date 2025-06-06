@@ -42,7 +42,7 @@ public class ShowCommand implements Command {
         }
         else {
             System.out.println("Коллекция пуста");
-            show = "Коллекция пуста";
+            show = "Collection is empty";
         }
 
         return new RequestObj(show);

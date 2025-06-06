@@ -37,7 +37,7 @@ public class GroupCountingBySemesterEnum implements Command {
         ArrayList<Integer> a = new ArrayList<>();
         a.add(1);
         if (studyGroups.isEmpty()) {
-            ans = "Коллекция пуста";
+            ans = "Collection is empty";
         } else {
 
             if (studyGroups.size() == 1) {
@@ -48,7 +48,7 @@ public class GroupCountingBySemesterEnum implements Command {
                     String s = "";
                     s += studyGroups.get(x) + "\n";
                     if (studyGroups.get(x).getSemesterEnum() != studyGroups.get(x + 1).getSemesterEnum()) {
-                        s += "\nКол-во групп " + studyGroups.get(x).getSemesterEnum().getSem() + " семестра равно " + a.get(0) + "\n";
+                        s += "\nNumber of groups " + studyGroups.get(x).getSemesterEnum().getSem() + " semester is equal to " + a.get(0) + "\n";
                         a.set(0, 1);
                     } else {
                         a.set(0, a.get(0) + 1);
@@ -68,13 +68,13 @@ public class GroupCountingBySemesterEnum implements Command {
 
              */
             if (studyGroups.size() ==  1) {
-                ans += "\nКол-во групп " + studyGroups.get(0).getSemesterEnum().getSem() + " семестра равно " + 1;
+                ans += "\nNumber of groups " + studyGroups.get(0).getSemesterEnum().getSem() + " semester is equal to " + 1;
             } else if (studyGroups.get(studyGroups.size() - 2).getSemesterEnum() != studyGroups.get(studyGroups.size() - 1).getSemesterEnum()) {
                     ans += studyGroups.get(studyGroups.size() - 1);
-                    ans += "\nКол-во групп " + studyGroups.get(studyGroups.size() - 1).getSemesterEnum().getSem() + " семестра равно " + 1;
+                    ans += "\nNumber of groups " + studyGroups.get(studyGroups.size() - 1).getSemesterEnum().getSem() + " semester is equal to " + 1;
             } else {
                 ans += studyGroups.get(studyGroups.size() - 1);
-                ans += "\nКол-во групп " + studyGroups.get(studyGroups.size() - 1).getSemesterEnum().getSem() + " семестра равно " + (a.get(0));
+                ans += "\nNumber of groups " + studyGroups.get(studyGroups.size() - 1).getSemesterEnum().getSem() + " semester is equal to " + (a.get(0));
             }
         }
         System.out.println(ans);

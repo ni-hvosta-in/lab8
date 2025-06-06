@@ -53,9 +53,9 @@ public class UpdateCommand implements Command {
                         .limit(1)
                         .forEach(x -> collectionManager.updateStudyGroup(x.getKey(), studyGroup));
 
-                return new RequestObj("обновил id " + id + " " + studyGroup);
+                return new RequestObj("updated id " + id + " " + studyGroup);
             } else {
-                return new RequestObj("объект принадлежит другому человеку");
+                return new RequestObj("This is another user's object");
             }
 
 

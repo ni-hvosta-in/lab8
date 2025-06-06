@@ -45,7 +45,7 @@ public class ClearCommand implements Command {
         for (String key : keysToRemove) {
             collectionManager.removeKey(key);
         }
-        req = new RequestObj("отчистил ваши объекты");
+        req = new RequestObj("cleaned your objects");
         return req;
     }
 

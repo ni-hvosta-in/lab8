@@ -89,10 +89,10 @@ public class CollectionManager {  //receiver
 
         String info = "";
         lock.lock();
-        info += "Тип коллекции: " + studyGroupList.getClass().getName() + "\n";
+        info += "Collection type: " + studyGroupList.getClass().getName() + "\n";
         lock.unlock();
-        info += "Дата инициализации: " + initializationDate+ "\n";
-        info += "Кол-во элементов в коллекции: " + studyGroupList.size();
+        info += "Initialization date: " + initializationDate+ "\n";
+        info += "Number of items in collection: " + studyGroupList.size();
         return info;
     }
 

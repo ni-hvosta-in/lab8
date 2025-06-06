@@ -7,11 +7,11 @@ import java.util.Map;
  * Перечисление всех цветов волос
  */
 public enum HairColor {
-    RED("красный"),
-    BLACK("черный"),
-    ORANGE("оранжевый"),
-    WHITE("белый"),
-    BROWN("коричневый");
+    RED("red"),
+    BLACK("black"),
+    ORANGE("orange"),
+    WHITE("white"),
+    BROWN("brown");
 
     private final String col;
 
