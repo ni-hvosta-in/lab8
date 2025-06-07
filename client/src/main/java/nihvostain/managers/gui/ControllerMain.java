@@ -31,6 +31,7 @@ import nihvostain.managers.Invoker;
 import nihvostain.utility.Command;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -50,12 +51,12 @@ public class ControllerMain {
     private final ContextMenu contextMenu = new ContextMenu();
     @FXML private TableView<StudyGroupWithKey> studyGroups;
     @FXML private TableColumn<StudyGroupWithKey, Integer> keyColumn;
-    @FXML private TableColumn<StudyGroupWithKey, Long> idColumn;
+    @FXML private TableColumn<StudyGroupWithKey, String> idColumn;
     @FXML private TableColumn<StudyGroupWithKey, String> nameColumn;
-    @FXML private TableColumn<StudyGroupWithKey, Integer> xColumn;
-    @FXML private TableColumn<StudyGroupWithKey, Float> yColumn;
+    @FXML private TableColumn<StudyGroupWithKey, String> xColumn;
+    @FXML private TableColumn<StudyGroupWithKey, String> yColumn;
     @FXML private TableColumn<StudyGroupWithKey, String> creationDateColumn;
-    @FXML private TableColumn<StudyGroupWithKey, Long> studentsCountColumn;
+    @FXML private TableColumn<StudyGroupWithKey, String> studentsCountColumn;
     @FXML private TableColumn<StudyGroupWithKey, String> formOfEducationColumn;
     @FXML private TableColumn<StudyGroupWithKey, String> semesterEnumColumn;
     @FXML private TableColumn<StudyGroupWithKey, String> namePColumn;
@@ -139,11 +140,7 @@ public class ControllerMain {
     }
 
     @FXML public void visualize(ActionEvent actionEvent){
-        if (!graphView.getStage().isShowing()) {
-            graphView.show();
-        } else {
-            graphView.getStage().close();
-        }
+        graphView.show();
     }
 
     @FXML private void initialize() {
@@ -193,17 +190,17 @@ public class ControllerMain {
 
     private void setupTableColumns() {
 
+        NumberFormat integerFormatter = NumberFormat.getIntegerInstance(currentLocale);
+        NumberFormat numberFormatter = NumberFormat.getNumberInstance(currentLocale);
+
         keyColumn.setCellValueFactory(new PropertyValueFactory<>("key"));
 
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-
+        idColumn.setCellValueFactory(data -> new SimpleStringProperty(integerFormatter.format(data.getValue().getId())));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        xColumn.setCellValueFactory(cell ->
-                new SimpleIntegerProperty(cell.getValue().getCoordinates().getX()).asObject());
+        xColumn.setCellValueFactory(data -> new SimpleStringProperty(integerFormatter.format(data.getValue().getCoordinates().getX())));
 
-        yColumn.setCellValueFactory(cell ->
-                new SimpleFloatProperty(cell.getValue().getCoordinates().getY()).asObject());
+        yColumn.setCellValueFactory(data -> new SimpleStringProperty(numberFormatter.format(data.getValue().getCoordinates().getY())));
 
         creationDateColumn.setCellValueFactory(cellData -> {
             LocalDateTime date = cellData.getValue().getStudyGroup().getCreationDate();
@@ -212,7 +209,7 @@ public class ControllerMain {
             return new SimpleStringProperty(formatted);
         });
 
-        studentsCountColumn.setCellValueFactory(new PropertyValueFactory<>("studentsCount"));
+        studentsCountColumn.setCellValueFactory(data -> new SimpleStringProperty(integerFormatter.format(data.getValue().getStudentsCount())));
 
         formOfEducationColumn.setCellValueFactory(cell ->
                 new SimpleStringProperty(cell.getValue().getStudyGroup().getFormOfEducation().toString()));

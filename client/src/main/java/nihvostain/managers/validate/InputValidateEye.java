@@ -26,7 +26,7 @@ public class InputValidateEye implements Validable {
     @Override
     public boolean isValidate(String eyeColor) {
         Map<String, EyeColor> colorEyeMap = EyeColor.getColors();
-        return colorEyeMap.containsKey(eyeColor);
+        return colorEyeMap.containsKey(eyeColor) || eyeColor.isEmpty();
     }
 
     /**

@@ -25,7 +25,7 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </HBox.margin>
       </TextField>
-      <Button fx:id="setFieldButton" mnemonicParsing="false" text="Button" onAction="#setField">
+      <Button fx:id="setFieldButton" mnemonicParsing="false" text="%OK" onAction="#setField">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
