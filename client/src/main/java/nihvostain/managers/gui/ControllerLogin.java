@@ -147,7 +147,7 @@ public class ControllerLogin {
         controllerMain.startUpdates();
 
         LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
-        commands.put("help", new HelpCommand(commands.values(), controllerMain.getResultLabel()));
+        commands.put("help", new HelpCommand(commands.values(), controllerMain.getResultLabel(),bundle));
         commands.put("show", new ShowCommand(communication));
         commands.put("info", new InfoCommand(communication));
         commands.put("insert", new InsertCommand(communication, login, password));

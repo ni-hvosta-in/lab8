@@ -25,7 +25,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import nihvostain.commands.RemoveKeyCommand;
+import nihvostain.commands.*;
 import nihvostain.managers.Communication;
 import nihvostain.managers.Invoker;
 import nihvostain.utility.Command;
@@ -187,42 +187,7 @@ public class ControllerMain {
         setupTableColumns();
         setSorting();
         ResourceBundle resourceBundle = ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale);
-        graphView.getCanvas().setOnMouseClicked(event -> {
-            double x = event.getX();
-            double y = event.getY();
-            contextMenu.hide();
-            contextMenu.getItems().clear();
-            StudyGroupWithKey studyGroupWithKey = graphView.getStudyGroupByCoordinates(x, y);
-            if (studyGroupWithKey != null) {
-                if (event.getButton() == MouseButton.PRIMARY) {
-                    if (event.getClickCount() == 1) {
-                        resultLabel.setText(studyGroupWithKey.getStudyGroup().toString());
-                    } else if (event.getClickCount() == 2) {
-                        try {
-                            updateStudyGroup(studyGroupWithKey);
-                        } catch (IOException ignored) {
-                        }
-                    }
-                } else if (event.getButton() == MouseButton.SECONDARY) {
-                    MenuItem editItem = new MenuItem(resourceBundle.getString("edit"));
-                    editItem.setOnAction(e -> {
-                        try {
-                            updateStudyGroup(studyGroupWithKey);
-                        } catch (IOException ignored) {
-                        }
-                    });
-                    MenuItem delItem = new MenuItem(resourceBundle.getString("delete"));
-                    delItem.setOnAction(e -> {
-                        deleteStudyGroup(studyGroupWithKey);
-                    });
-                    contextMenu.getItems().add(editItem);
-                    contextMenu.getItems().add(delItem);
-                    contextMenu.show(graphView.getCanvas(), event.getScreenX(), event.getScreenY());
-                }
-            } else {
-                resultLabel.clear();
-            }
-        });
+        setContextMenu(resourceBundle);
 
     }
 
@@ -591,21 +556,82 @@ public class ControllerMain {
         });
 
         Parent root;
+        ControllerMain controllerMain;
         try {
-            root = fxmlLoader.load();  // initialize() вызовется с нужной локалью
+            root = fxmlLoader.load();
+            controllerMain = fxmlLoader.getController();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        setContextMenu(resourceBundle);
+
+        LinkedHashMap<String, Command> commands = new LinkedHashMap<>();
+        commands.put("help", new HelpCommand(commands.values(), controllerMain.getResultLabel(), resourceBundle));
+        commands.put("show", new ShowCommand(communication));
+        commands.put("info", new InfoCommand(communication));
+        commands.put("insert", new InsertCommand(communication, login, password));
+        commands.put("update", new UpdateCommand(communication, login, password));
+        commands.put("remove_key", new RemoveKeyCommand(communication, login, password));
+        commands.put("clear", new ClearCommand(communication));
+        commands.put("execute_script", new ExecuteScriptCommand(
+                communication, login, password, controllerMain.getResultLabel(), resourceBundle));
+        commands.put("exit", new ExitCommand(communication));
+        commands.put("remove_lower", new RemoveLowerCommand(communication));
+        commands.put("replace_if_greater", new ReplaceIfGreaterCommand(communication, login, password));
+        commands.put("remove_greater_key", new RemoveGreaterKeyCommand(communication));
+        commands.put("group_counting_by_semester_enum", new GroupCountingBySemesterEnum(communication));
+        commands.put("filter_contains_name", new FilterContainsNameCommand(communication));
+        commands.put("filter_greater_than_group_admin", new FilterGreaterThanGroupAdminCommand(communication));
+        Invoker.setCommands(commands);
 
         Scene scene = new Scene(root);
         if (languageList.getScene() != null) {
             Stage stage = (Stage) languageList.getScene().getWindow();
             stage.setTitle("Main Window");
             stage.setScene(scene);
-            loginLabel.setText(login);
             stage.show();
         }
+    }
 
+
+    private void setContextMenu(ResourceBundle resourceBundle) {
+        graphView.getCanvas().setOnMouseClicked(event -> {
+            double x = event.getX();
+            double y = event.getY();
+            contextMenu.hide();
+            contextMenu.getItems().clear();
+            StudyGroupWithKey studyGroupWithKey = graphView.getStudyGroupByCoordinates(x, y);
+            if (studyGroupWithKey != null) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    if (event.getClickCount() == 1) {
+                        resultLabel.setText(studyGroupWithKey.getStudyGroup().toString());
+                    } else if (event.getClickCount() == 2) {
+                        try {
+                            updateStudyGroup(studyGroupWithKey);
+                        } catch (IOException ignored) {
+                        }
+                    }
+                } else if (event.getButton() == MouseButton.SECONDARY) {
+                    MenuItem editItem = new MenuItem(resourceBundle.getString("edit"));
+                    editItem.setOnAction(e -> {
+                        try {
+                            updateStudyGroup(studyGroupWithKey);
+                        } catch (IOException ignored) {
+                        }
+                    });
+                    MenuItem delItem = new MenuItem(resourceBundle.getString("delete"));
+                    delItem.setOnAction(e -> {
+                        deleteStudyGroup(studyGroupWithKey);
+                    });
+                    contextMenu.getItems().add(editItem);
+                    contextMenu.getItems().add(delItem);
+                    contextMenu.show(graphView.getCanvas(), event.getScreenX(), event.getScreenY());
+                }
+            } else {
+                resultLabel.clear();
+            }
+        });
     }
 
     public ChoiceBox<String> getLanguageList() {

@@ -72,7 +72,23 @@ public class GuiLabels_es_PA extends ListResourceBundle {
                 {"fileNotFound", "no se encontró archivo con ese nombre"},
                 {"wrongParamInScript", "Parámetros incorrectos en el script"},
                 {"wrongParam", "Parámetros incorrectos"},
-                {"wrongCommand", "Comando no reconocido en el script"}
+                {"wrongCommand", "Comando no reconocido en el script"},
+                {"clear : очистить коллекцию", "clear : limpiar la colección"},
+                {"execute_script file_name : считать и исполнить скрипт из указанного файла. В скрипте содержатся команды в таком же виде, в котором их вводит пользователь в интерактивном режиме", "execute_script file_name : leer y ejecutar el script del archivo especificado. El script contiene comandos en el mismo formato que el usuario los introduce en modo interactivo"},
+                {"exit : завершить программу (без сохранения в файл)", "exit : finalizar el programa (sin guardar en archivo)"},
+                {"filter_contains_name name : вывести элементы, значение поля name которых содержит заданную подстроку", "filter_contains_name name : mostrar elementos cuyo campo name contiene la subcadena dada"},
+                {"filter_greater_than_group_admin groupAdmin : вывести элементы, значение поля groupAdmin которых больше заданного", "filter_greater_than_group_admin groupAdmin : mostrar elementos cuyo campo groupAdmin es mayor que el dado"},
+                {"group_counting_by_semester_enum : сгруппировать элементы коллекции по значению поля semesterEnum, вывести количество элементов в каждой группе", "group_counting_by_semester_enum : agrupar elementos de la colección por el valor del campo semesterEnum, mostrar el número de elementos en cada grupo"},
+                {"help : вывести справку по доступным командам", "help : mostrar ayuda para los comandos disponibles"},
+                {"info : вывести в стандартный поток вывода информацию о коллекции", "info : mostrar información de la colección en la salida estándar"},
+                {"insert null {element} : добавить новый элемент с заданным ключом", "insert null {element} : agregar un nuevo elemento con la clave dada"},
+                {"remove_greater_key null : удалить из коллекции все элементы, ключ которых превышает заданный", "remove_greater_key null : eliminar de la colección todos los elementos cuya clave sea mayor que la dada"},
+                {"remove_key null : удалить элемент из коллекции по его ключу", "remove_key null : eliminar un elemento de la colección por su clave"},
+                {"remove_lower {element} : удалить из коллекции все элементы, меньшие, чем заданный", "remove_lower {element} : eliminar de la colección todos los elementos que son menores que el dado"},
+                {"replace_if_greater null {element} : заменить значение по ключу, если новое значение больше старого", "replace_if_greater null {element} : reemplazar el valor por clave si el nuevo valor es mayor que el antiguo"},
+                {"show : вывести в стандартный поток вывода все элементы коллекции в строковом представлении", "show : mostrar todos los elementos de la colección en la salida estándar en forma de cadena"},
+                {"update id {element} : обновить значение элемента коллекции, id которого равен заданному", "update id {element} : actualizar el valor del elemento de la colección cuyo id es igual al dado"}
+
         };
     }
 }

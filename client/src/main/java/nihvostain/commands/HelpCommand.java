@@ -9,6 +9,7 @@ import nihvostain.utility.Command;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ResourceBundle;
 
 /**
  * Команда помощи
@@ -17,23 +18,23 @@ public class HelpCommand implements Command {
 
     private final Collection<Command> commands;
     private final TextArea resultLabel;
-    public HelpCommand(Collection<Command> commands, TextArea resultLabel){
+    private final ResourceBundle resourceBundle;
+    public HelpCommand(Collection<Command> commands, TextArea resultLabel, ResourceBundle resourceBundle){
         this.commands = commands;
         this.resultLabel = resultLabel;
+        this.resourceBundle = resourceBundle;
     }
 
     @Override
     public Request request(ArrayList<String> args) {
-
         final String[] answer = {""};
-        for (Command command : commands) {
-            answer[0] = answer[0] + command.description() + "\n";
-        }
         commands.forEach(x -> {
             System.out.println(x.description());
-            answer[0] = answer[0] +x.description()+"\n";});
+            answer[0] = answer[0] +resourceBundle.getString(x.description())+"\n";});
         resultLabel.setText(answer[0]);
+        System.out.println(resultLabel);
         return null;
+
     }
 
     /**
