@@ -39,9 +39,12 @@ import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ControllerMain {
     public ChoiceBox<String> languageList;
+    public ComboBox comboBox;
+    public TextField filter;
     @FXML private Label loginLabel;
     @FXML private TextArea resultLabel = null;
     private Communication communication;
@@ -180,12 +183,18 @@ public class ControllerMain {
                 reloadWindow(locale);
             }
         });
+        filter.textProperty().addListener((observable, oldValue, newValue) -> {
+            applyFilter();
+        });
         loginLabel.setText(login);
         setupTableColumns();
         setSorting();
         ResourceBundle resourceBundle = ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale);
         setContextMenu(resourceBundle);
-
+        comboBox.getItems().addAll(resourceBundle.getString("id"), resourceBundle.getString("name"), resourceBundle.getString("x"), resourceBundle.getString("y"), resourceBundle.getString("studentsCount"),
+                resourceBundle.getString("creationDate"), resourceBundle.getString("formOfEducation"), resourceBundle.getString("semesterEnum"), resourceBundle.getString("nameP"),
+                resourceBundle.getString("birthday"), resourceBundle.getString("passportID"), resourceBundle.getString("eyeColor"), resourceBundle.getString("hairColor"));
+        comboBox.getSelectionModel().selectFirst();
     }
 
     private void setupTableColumns() {
@@ -500,11 +509,10 @@ public class ControllerMain {
         List<StudyGroupWithKey> newData = data.getStudyGroups();
         sG = newData;
         if (!isEqualsStudyGroups(sG, sGOld)) {
-            graphView.drawStudyGroups(sG);
             Platform.runLater(() -> {
                 // Сохраняем состояние сортировки перед обновлением
                 // Обновляем данные
-
+                graphView.drawStudyGroups(sG);
                 groups.setAll(newData);
                 studyGroups.setItems(groups);
 
@@ -591,6 +599,117 @@ public class ControllerMain {
         }
     }
 
+
+    private void applyFilter() {
+        String filterText = filter.getText();
+        String selectedField = (String) comboBox.getSelectionModel().getSelectedItem();
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("nihvostain.managers.gui.local.GuiLabels", currentLocale);
+        if (filterText == null || filterText.isEmpty() || selectedField == null) {
+            studyGroups.setItems(FXCollections.observableArrayList(sG));
+            return;
+        }
+
+        Stream<StudyGroupWithKey> stream = sG.stream();
+        String newValue = filterText;
+        System.out.println(selectedField);
+        selectedField = findKeyByValue(resourceBundle, selectedField);
+        try {
+            switch (selectedField) {
+                case "id":
+                    stream = stream.filter(group -> String.valueOf(group.getId()).contains(newValue));
+                    break;
+
+                case "name":
+                    stream = stream.filter(group -> group.getName() != null && group.getName().contains(newValue));
+                    break;
+
+                case "x":
+                    stream = stream.filter(group -> String.valueOf(group.getCoordinates().getX()).contains(newValue));
+                    break;
+
+                case "y":
+                    stream = stream.filter(group -> String.valueOf(group.getCoordinates().getY()).contains(newValue));
+                    break;
+
+                case "studentsCount":
+                    stream = stream.filter(group -> String.valueOf(group.getStudentsCount()).contains(newValue));
+                    break;
+
+                case "creationDate":
+                    stream = stream.filter(group -> group.getStudyGroup().getCreationDate() != null &&
+                            group.getStudyGroup().getCreationDate().toString().contains(newValue));
+                    break;
+
+                case "formOfEducation":
+                    stream = stream.filter(group -> group.getStudyGroup().getFormOfEducation() != null &&
+                            group.getStudyGroup().getFormOfEducation().toString().contains(newValue));
+                    break;
+
+                case "semesterEnum":
+                    stream = stream.filter(group -> group.getStudyGroup().getSemesterEnum() != null &&
+                            group.getStudyGroup().getSemesterEnum().toString().contains(newValue));
+                    break;
+
+                case "nameP":
+                    stream = stream.filter(group -> {
+                        Person admin = group.getStudyGroup().getGroupAdmin();
+                        return admin != null && admin.getName() != null && admin.getName().contains(newValue);
+                    });
+                    break;
+
+                case "birthday":
+                    stream = stream.filter(group -> {
+                        Person admin = group.getStudyGroup().getGroupAdmin();
+                        return admin != null && admin.getBirthday() != null &&
+                                admin.getBirthday().toString().contains(newValue);
+                    });
+                    break;
+
+                case "passportID":
+                    stream = stream.filter(group -> {
+                        Person admin = group.getStudyGroup().getGroupAdmin();
+                        return admin != null && admin.getPassportID() != null &&
+                                admin.getPassportID().contains(newValue);
+                    });
+                    break;
+
+                case "eyeColor":
+                    stream = stream.filter(group -> {
+                        Person admin = group.getStudyGroup().getGroupAdmin();
+                        return admin != null && admin.getEyeColor() != null &&
+                                admin.getEyeColor().toString().contains(newValue);
+                    });
+                    break;
+
+                case "hairColor":
+                    stream = stream.filter(group -> {
+                        Person admin = group.getStudyGroup().getGroupAdmin();
+                        return admin != null && admin.getHairColor() != null &&
+                                admin.getHairColor().toString().contains(newValue);
+                    });
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unknown filter field: " + selectedField);
+            }
+
+            List<StudyGroupWithKey> filteredList = stream.collect(Collectors.toList());
+            studyGroups.setItems(FXCollections.observableArrayList(filteredList));
+
+        } catch (NullPointerException ignored) {
+        }
+    }
+
+
+    public String findKeyByValue(ResourceBundle bundle, String valueToFind) {
+        for (String key : bundle.keySet()) {
+            String value = bundle.getString(key);
+            if (value == valueToFind) {
+                return key;  // нашли ключ
+            }
+        }
+        return null; // ключ не найден
+    }
 
     private void setContextMenu(ResourceBundle resourceBundle) {
         graphView.getCanvas().setOnMouseClicked(event -> {
